@@ -1,4 +1,3 @@
-//copy from https://www.youtube.com/watch?v=t3LhQbMlDRA&list=PLx3k0RGeXZ_wZ_gYpYXfH6FTK7e0cDL0k&index=6
 const WebSocket = require('ws');
 
 //const serverAddress = "ws://192.168.14.101:5000";
