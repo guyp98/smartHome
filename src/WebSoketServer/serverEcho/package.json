@@ -1,0 +1,14 @@
+{
+  "name": "echoserver",
+  "version": "1.0.0",
+  "description": "example",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^7.5.3"
+  }
+}
