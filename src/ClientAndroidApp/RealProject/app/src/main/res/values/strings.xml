@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">RealProject</string>
+    <string name="danandguy">DanAndGuy</string>
+    <string name="items">Items</string>
+    <string name="combos">Combos</string>
+    <string name="simple_list">Simple list</string>
+    <string name="title">Title</string>
+    <string name="type">Type</string>
+    <string-array name="TypeOfAppliances">
+        <item>Light</item>
+        <item>Water Heater</item>
+        <item>Other</item>
+
+    </string-array>
+</resources>
