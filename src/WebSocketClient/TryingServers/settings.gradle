@@ -1,0 +1,2 @@
+rootProject.name = "Trying Servers"
+include ':app'
