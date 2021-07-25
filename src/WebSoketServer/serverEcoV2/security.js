@@ -31,3 +31,4 @@ export const isConnected=(userName)=>{
 }
 
 addUser("guy","porat");
+addUser("guy2","porat2");
