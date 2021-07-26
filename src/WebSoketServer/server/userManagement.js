@@ -1,25 +1,21 @@
-
 const usersMap=new Map(); //username => User
-//const userIsConnnected=new Map();//check if user is connected(string,blool)
-module.exports=securityData={
-    //usersMap:new Map(),//username => User
-    //userIsConnnected:new Map(),//check if user is connected(string,blool)
+
+module.exports=userData={
     parseUserAndPassword:(msg)=>{//connverts user messege to user name and password as object
         return JSON.parse(msg);
     },
     addUser:(userName,password)=>{
         usersMap.set(userName,new User(userName,password));
-        //userIsConnnected.set(userName,false);
     },
     authenticate:(userName,password)=>{ 
         userObj=usersMap.get(userName);
         return password==userObj.password;
     },
     tryConnectUser:(userName,password)=>{
-        if(securityData.authenticate(userName,password)&&!securityData.isConnected(userName)){
+        if(userData.authenticate(userName,password) &&
+                                    !userData.isConnected(userName)){
             userObj=usersMap.get(userName);
             userObj.Connected=true;
-            //userIsConnnected.set(userName,true);
             return true;
         }
         return false;
@@ -27,11 +23,16 @@ module.exports=securityData={
     disconnect:(userName)=>{
         userObj=usersMap.get(userName);
         userObj.Connected=false;
-        //userIsConnnected.set(userName,false);
+        
     }, 
     isConnected:(userName)=>{
         userObj=usersMap.get(userName);
-        return userObj.Connected;
+        if(userObj!=undefined){
+            return userObj.Connected;
+        }
+        else{
+            return false;
+        }
     }
 }
 
@@ -42,3 +43,7 @@ class User{
         this.Connected=false;
     }
 }
+
+
+userData.addUser("guy","porat");
+userData.addUser("guy2","porat2");
