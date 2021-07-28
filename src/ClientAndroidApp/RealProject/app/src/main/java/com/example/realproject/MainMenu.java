@@ -11,15 +11,18 @@ import okhttp3.WebSocket;
 public class MainMenu extends AppCompatActivity {
 
     WebSocket ws;
+    LoadingPage loadingPage;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Intent intent = getIntent();
+        loadingPage = new LoadingPage(MainMenu.this);
     }
 
     public void onButtonClick(View view){
         if(view.getId() == R.id.buttonItems) {
+            loadingPage.startLoadingDialog();
 
             //LoadingPage loadingPage = new LoadingPage(MainMenu.this);
             //loadingPage.startLoadingDialog();

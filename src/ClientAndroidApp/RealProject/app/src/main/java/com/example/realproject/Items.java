@@ -195,10 +195,10 @@ public class Items extends AppCompatActivity {
     public void addItemToList(String areaString,String typeString){
         area.add(areaString);
         desc.add(typeString);
-        /*if(typeString.equals("Light"))
+        if(typeString.equals("Light"))
             progImag.add(R.drawable.lightbuldyellow);
         else if(typeString.equals("Water Heater"))
-            progImag.add(R.drawable.boiling_water);*/
+            progImag.add(R.drawable.boiling_water);
 
 
     }

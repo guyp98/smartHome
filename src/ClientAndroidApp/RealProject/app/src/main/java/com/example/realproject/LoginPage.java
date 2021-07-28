@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -59,12 +60,13 @@ public class LoginPage extends AppCompatActivity {
     }
 
     public void onClickLogin (View view) throws JSONException {
+
         if(view.getId()== login.getId());
         {
 
             String username = usernameTil.getEditText().getText().toString();
             String password = passwordTil.getEditText().getText().toString();
-            String jsonLoginStr="{messageType:login, username:"+username+", password :"+password+"}";
+            String jsonLoginStr="{messageType:loginResponse, loggedIn:true, username:"+username+", password :"+password+"}";
 
             JSONObject jsonLogin= new JSONObject(jsonLoginStr);
 
@@ -93,19 +95,28 @@ public class LoginPage extends AppCompatActivity {
 
         @Override
         public void onMessage(WebSocket webSocket, String text) {
+            try {
+                store = text;
+                String type = "";
+                String success = "";
 
-            store=text;
-            if(text.equals("true")){
-                Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
-                startActivity(itemsAct);
+                JSONObject jsonObject = new JSONObject(text);
+                type = jsonObject.getString("messageType");
 
+                switch(type) {
 
+                    case "loginResponse":
+                        if (jsonObject.getString("loggedIn").equals("true")) {
+                            Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
+                            startActivity(itemsAct);
+                        } else {
+                            print(jsonObject.getString("errorDetails"));
+                        }
+
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            else {
-                Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
-                startActivity(itemsAct);
-            }
-
         }
 
 
