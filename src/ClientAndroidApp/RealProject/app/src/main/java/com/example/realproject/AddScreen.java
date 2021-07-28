@@ -15,10 +15,13 @@ import android.widget.Toast;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
 
+import okhttp3.WebSocket;
+
 public class AddScreen extends AppCompatActivity {
     private TextInputLayout til;
     private String [] types;
     private Spinner dropDown;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,6 +33,7 @@ public class AddScreen extends AppCompatActivity {
                 getResources().getStringArray(R.array.TypeOfAppliances));
         ar.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dropDown.setAdapter(ar);
+
 
 
     }

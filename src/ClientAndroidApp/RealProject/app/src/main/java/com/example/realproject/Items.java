@@ -16,6 +16,10 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 public class Items extends AppCompatActivity {
@@ -29,6 +33,7 @@ public class Items extends AppCompatActivity {
     SharedPreferences.Editor editor;
     private ProgramAdapter programAdapter;
     int dataSize;
+    int index=0;
 
 
 
@@ -36,6 +41,12 @@ public class Items extends AppCompatActivity {
     public static final String myData = "myData";
     public static final String itemSize = "Size";
 
+
+    public void getItems ( ){
+        LoginPage.ws.send("give items please");
+
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,8 +102,7 @@ public class Items extends AppCompatActivity {
         desc.add("Light");
         desc.add("Light");
 
-
-        progImag.add(R.drawable.lightbuldyellow);
+         progImag.add(R.drawable.lightbuldyellow);
         progImag.add(R.drawable.boiling_water);
         progImag.add(R.drawable.lightbuldyellow);
         progImag.add(R.drawable.lightbuldyellow);
@@ -105,18 +115,38 @@ public class Items extends AppCompatActivity {
 
 
 
-    public void onButtonClick(View view) {
+
+
+
+
+    public void onButtonClick(View view) throws JSONException {
         if (view.getId() == R.id.buttonAdd) {
-            Intent itemsAct = new Intent(Items.this, AddScreen.class);
-            startActivityForResult(itemsAct,1);
 
 
 
+                Intent itemsAct = new Intent(Items.this, AddScreen.class);
+                startActivityForResult(itemsAct,1);
+                /*String jsonLoginStr = "{\"appliances\":[\n" +
+                        "  {\"area\":\"kitchen\", \"desc\":\"light\"}, \n" +
+                        "{\"area\":\"bedroom\", \"desc\":\"light\"}]}";
+                JSONObject jsonLogin = new JSONObject(jsonLoginStr);
+                LoginPage.ws.send(jsonLogin.toString());
+                index++;*/
 
+              /* String applianceArray= LoginPage.store;
+               JSONObject jsonObject = new JSONObject(applianceArray);
+               JSONArray jsonArray = new JSONArray("appliances");
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject app = jsonArray.getJSONObject(i);
+                    area.add(app.getString("area"));
+                    desc.add(app.getString("desc"));
+                    if(desc.equals("light"))
+                        progImag.add(R.drawable.lightbuldyellow);
+                    else
+                        progImag.add(R.drawable.boiling_water);
 
-
-
-
+                }
+                programAdapter.notifyDataSetChanged();*/
         }
         if (view.getId() == R.id.buttonRemove && positionSaver!=-1) {
             area.remove(positionSaver);
@@ -165,10 +195,10 @@ public class Items extends AppCompatActivity {
     public void addItemToList(String areaString,String typeString){
         area.add(areaString);
         desc.add(typeString);
-        if(typeString.equals("Light"))
+        /*if(typeString.equals("Light"))
             progImag.add(R.drawable.lightbuldyellow);
         else if(typeString.equals("Water Heater"))
-            progImag.add(R.drawable.boiling_water);
+            progImag.add(R.drawable.boiling_water);*/
 
 
     }
