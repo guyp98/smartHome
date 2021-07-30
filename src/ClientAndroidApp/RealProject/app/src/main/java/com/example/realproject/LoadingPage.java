@@ -20,9 +20,9 @@ public class LoadingPage  {
          AlertDialog.Builder builder = new AlertDialog.Builder(activity);
          LayoutInflater inflater = activity.getLayoutInflater();
          builder.setView(inflater.inflate(R.layout.loading_screen,null));
-         builder.setCancelable(true);
+         builder.setCancelable(false);
 
-         builder.create();
+         dialog = builder.create();
          dialog.show();
 
     }

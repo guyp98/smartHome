@@ -24,9 +24,9 @@ import java.util.ArrayList;
 
 public class Items extends AppCompatActivity {
 
-    private ArrayList<String> area;
-    private ArrayList<String> desc;
+    private ArrayList<String> area, desc;
     private ArrayList<Integer> progImag;
+    private String areaString,descString,state;
     private ListView items;
     private int positionSaver;
     SharedPreferences sharedPreferences;
@@ -49,34 +49,35 @@ public class Items extends AppCompatActivity {
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        try {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_items);
 
 
-        sharedPreferences = getSharedPreferences(myData,MODE_PRIVATE);
-        editor=sharedPreferences.edit();
+
 
         area = new ArrayList<>();
         desc = new ArrayList<>();
         progImag = new ArrayList<>();
 
 
+        JSONObject jsonObject = new JSONObject(LoginPage.store);
+        JSONArray jsonArray = jsonObject.getJSONArray("appliances");
+        for (int i = 0; i <jsonArray.length() ; i++) {
+            JSONObject applian = jsonArray.getJSONObject(i);
+            areaString= applian.getString("applianceName");
+            descString = applian.getString("applianceDescription");
+            state = applian.getString("state");
 
-
-
-
-
-
-        dataSize= sharedPreferences.getInt(itemSize,0);
-        for (int i = 1 ; i <= dataSize ; i++) {
-            String typeString = sharedPreferences.getString(""+i+"type","");
-            String areaString = sharedPreferences.getString(""+i+"area","");
-            addItemToList(areaString,typeString);
+            addItemToList(areaString,descString);
         }
+
+
 
         items = findViewById(R.id.listViewItems);
         programAdapter = new ProgramAdapter(this, area, progImag, desc);
         items.setAdapter(programAdapter);
+
 
         items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -85,6 +86,23 @@ public class Items extends AppCompatActivity {
                 Toast.makeText(Items.this,"you clicked"+ position,Toast.LENGTH_SHORT).show();
             }
         });
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        //sharedPreferences = getSharedPreferences(myData,MODE_PRIVATE);
+        //editor=sharedPreferences.edit();
+
+        /*dataSize= sharedPreferences.getInt(itemSize,0);
+        for (int i = 1 ; i <= dataSize ; i++) {
+            String typeString = sharedPreferences.getString(""+i+"type","");
+            String areaString = sharedPreferences.getString(""+i+"area","");
+            addItemToList(areaString,typeString);
+        }*/
+
+
+
+
     }
         /*area.add("Bathroom");
         area.add("Bathroom");
@@ -126,27 +144,7 @@ public class Items extends AppCompatActivity {
 
                 Intent itemsAct = new Intent(Items.this, AddScreen.class);
                 startActivityForResult(itemsAct,1);
-                /*String jsonLoginStr = "{\"appliances\":[\n" +
-                        "  {\"area\":\"kitchen\", \"desc\":\"light\"}, \n" +
-                        "{\"area\":\"bedroom\", \"desc\":\"light\"}]}";
-                JSONObject jsonLogin = new JSONObject(jsonLoginStr);
-                LoginPage.ws.send(jsonLogin.toString());
-                index++;*/
 
-              /* String applianceArray= LoginPage.store;
-               JSONObject jsonObject = new JSONObject(applianceArray);
-               JSONArray jsonArray = new JSONArray("appliances");
-                for (int i = 0; i < jsonArray.length(); i++) {
-                    JSONObject app = jsonArray.getJSONObject(i);
-                    area.add(app.getString("area"));
-                    desc.add(app.getString("desc"));
-                    if(desc.equals("light"))
-                        progImag.add(R.drawable.lightbuldyellow);
-                    else
-                        progImag.add(R.drawable.boiling_water);
-
-                }
-                programAdapter.notifyDataSetChanged();*/
         }
         if (view.getId() == R.id.buttonRemove && positionSaver!=-1) {
             area.remove(positionSaver);
@@ -192,12 +190,12 @@ public class Items extends AppCompatActivity {
     }
 
 
-    public void addItemToList(String areaString,String typeString){
+    public void addItemToList(String areaString,String descString){
         area.add(areaString);
-        desc.add(typeString);
-        if(typeString.equals("Light"))
+        desc.add(descString);
+        if(descString.equals("Light"))
             progImag.add(R.drawable.lightbuldyellow);
-        else if(typeString.equals("Water Heater"))
+        else if(descString.equals("Water Heater"))
             progImag.add(R.drawable.boiling_water);
 
 

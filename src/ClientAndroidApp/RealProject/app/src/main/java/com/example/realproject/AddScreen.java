@@ -15,6 +15,9 @@ import android.widget.Toast;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import okhttp3.WebSocket;
 
 public class AddScreen extends AppCompatActivity {
@@ -37,6 +40,19 @@ public class AddScreen extends AppCompatActivity {
 
 
     }
+    public void sendAddAppliance(String area, String desc){
+        try {
+            String jsonLoginStr = "{messageType:addAppliance, area:" + area + ", desc:" + desc + "}";
+            JSONObject jsonLogin = new JSONObject(jsonLoginStr);
+            LoginPage.ws.send(jsonLogin.toString());
+        }
+        catch (JSONException e){
+            System.out.println(e.toString());
+        }
+
+
+
+    }
 
     public void onButtonClick(View view){
         if(view.getId() == R.id.buttonAddFinal) {
@@ -47,6 +63,8 @@ public class AddScreen extends AppCompatActivity {
             resultIntent.putExtra("type", typeString);
             resultIntent.putExtra("area", areaString);
             setResult(Activity.RESULT_OK,resultIntent);
+
+            sendAddAppliance(areaString,typeString);
             finish();
 
             //Intent itemsAct = new Intent(MainActivity.this, Items.class);

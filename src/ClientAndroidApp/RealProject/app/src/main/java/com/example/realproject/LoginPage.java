@@ -66,6 +66,7 @@ public class LoginPage extends AppCompatActivity {
 
             String username = usernameTil.getEditText().getText().toString();
             String password = passwordTil.getEditText().getText().toString();
+
             String jsonLoginStr="{messageType:loginResponse, loggedIn:true, username:"+username+", password :"+password+"}";
 
             JSONObject jsonLogin= new JSONObject(jsonLoginStr);
@@ -84,6 +85,8 @@ public class LoginPage extends AppCompatActivity {
 
 
     }
+
+
 
 
     private final class EchoWebSocketListener extends WebSocketListener {
