@@ -61,7 +61,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
 
     public void onClickLogin (View view) throws JSONException {
 
-        if(view.getId()== register.getId())
+        if(view.getId()== login.getId())
         {
 
             username = usernameTil.getEditText().getText().toString();
@@ -82,7 +82,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
             ws.send(jsonLogin.toString());
             //Toast.makeText(LoginPage.this,"username "+ username +" password" + password,Toast.LENGTH_SHORT).show();
         }
-        else if (view.getId()== login.getId()){
+        else if (view.getId()== register.getId()){
 
             Intent itemsAct = new Intent(LoginPage.this, RegisterScreen.class);
             startActivity(itemsAct);
