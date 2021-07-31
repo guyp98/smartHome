@@ -14,15 +14,17 @@ const ws = new WebSocket(serverAddress, {
 });
 
 ws.on('open', function() {
-    ws.send("{\"messageType\":\"login\",\"username\":\"guy\",\"password\":\"porat\"}");
+    ws.send("{\"messageType\":\"login\",\"username\":\"guy2\",\"password\":\"porat2\"}");
 });
-ws.addEventListener('send',async function(){
-    const x ="hi guy2";
-    //ws.send("{\"messageType\":\"echo\",\"toEcho\":\""+x+"\"}");
-    ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"guy2\",\"msg\":\""+x+"\"}");//{"messageType":"","sendTo":"","msg":""} 
+ws.addEventListener('send',function(){
+    const x ="hi guy";
+   // ws.send("{\"messageType\":\"echo\",\"toEcho\":\""+x+"\"}");
+    ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"guy\",\"msg\":\""+x+"\"}");//{"messageType":"","sendTo":"","msg":""} 
     });
 ws.on('message', function(msg) {
     console.log("Received msg from the server: " + msg);
     ws.emit('send');
 });
 ws.on('close',function(){console.log("server closed" );})
+
+//{"messageType":"echo","toEcho":"hi guy"}
