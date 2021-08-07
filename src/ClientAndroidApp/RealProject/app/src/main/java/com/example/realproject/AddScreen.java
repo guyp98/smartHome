@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -22,8 +23,9 @@ import okhttp3.WebSocket;
 
 public class AddScreen extends AppCompatActivity {
     private TextInputLayout til;
-    private String [] types;
+    private String[] types;
     private Spinner dropDown;
+    private int loadedIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,52 +34,98 @@ public class AddScreen extends AppCompatActivity {
         til = findViewById(R.id.textInputArea);
         dropDown = findViewById(R.id.spinnerType);
 
-        ArrayAdapter ar  = new ArrayAdapter(this,R.layout.layout_dropdown_add,
-                getResources().getStringArray(R.array.TypeOfAppliances));
+        ArrayAdapter ar = new ArrayAdapter(this, R.layout.layout_dropdown_add, getResources().getStringArray(R.array.TypeOfAppliances));
         ar.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         dropDown.setAdapter(ar);
 
 
-
     }
-    public void sendAddAppliance(String area, String desc){
+
+    public void sendAddAppliance(String area, String desc) {
         try {
-            String jsonLoginStr = "{messageType:addAppliance, area:" + area + ", desc:" + desc + "}";
+
+            String jsonLoginStr = "{area:" + area + ", desc:" + desc + "}";
             JSONObject jsonLogin = new JSONObject(jsonLoginStr);
-            LoginPage.ws.send(jsonLogin.toString());
-        }
-        catch (JSONException e){
+            String jsonAddAppliaceStr;
+            int iddan = LoginPage.runningId;
+            if(LoginPage.testing)
+                jsonAddAppliaceStr = "{messageType:addApplianceResponse, added:true, itemId:"+iddan+" }";
+            else
+                    jsonAddAppliaceStr = "{messageType:addAppliance, details:" + jsonLogin.toString() + "}";
+
+            JSONObject jsonAddAppliance = new JSONObject(jsonAddAppliaceStr);
+            LoginPage.ws.send(jsonAddAppliance.toString());
+        } catch (JSONException e) {
             System.out.println(e.toString());
         }
 
 
-
     }
 
-    public void onButtonClick(View view){
-        if(view.getId() == R.id.buttonAddFinal) {
+    public void onButtonClick(View view) {
+        if (view.getId() == R.id.buttonAddFinal) {
             String typeString = dropDown.getSelectedItem().toString();
             String areaString = til.getEditText().getText().toString();
-            Toast.makeText(AddScreen.this,"you selected "+ areaString ,Toast.LENGTH_SHORT).show();
+            Toast.makeText(AddScreen.this, "you selected " + areaString, Toast.LENGTH_SHORT).show();
             Intent resultIntent = new Intent();
             resultIntent.putExtra("type", typeString);
             resultIntent.putExtra("area", areaString);
-            setResult(Activity.RESULT_OK,resultIntent);
+            LoginPage.store = "";
+            sendAddAppliance(areaString, typeString);
 
-            sendAddAppliance(areaString,typeString);
-            finish();
 
-            //Intent itemsAct = new Intent(MainActivity.this, Items.class);
-            //startActivity(itemsAct);
+            Handler handler = new Handler();
+            checkIfLoaded(handler, resultIntent);
+
+
+
+
+
 
 
         }
 
 
-
     }
 
 
+    public void checkIfLoaded(Handler handler, Intent resultIntent) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!LoginPage.store.isEmpty()) {
+                    try {
+                        JSONObject jsonObject = new JSONObject(LoginPage.store);
+                        String boo = jsonObject.getString("added");
+                        if (boo.equals("true")) {
+                            setResult(Activity.RESULT_OK, resultIntent);
+                            int id = jsonObject.getInt("itemId");
+                            resultIntent.putExtra("id", id);
+                            finish();
+
+                        } else
+                            setResult(Activity.RESULT_CANCELED, resultIntent);
 
 
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    if (loadedIndex < 300) {
+                        loadedIndex++;
+                        checkIfLoaded(handler, resultIntent);
+                    }
+                    else
+                    {
+                        setResult(Activity.RESULT_CANCELED, resultIntent);
+                        finish();
+
+                    }
+                    //else
+                    //errorLoading.setText("Could not load, please check internet connection");
+                }
+            }
+        }, 30); }
 }

@@ -14,6 +14,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="32dp"
+        app:startIconDrawable="@drawable/picture_person_ic_small"
         android:hint="Username"
         app:counterEnabled="true"
         app:counterMaxLength="20"
@@ -37,69 +38,74 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="32dp"
         android:hint="Password"
         app:counterEnabled="true"
         app:counterMaxLength="20"
+        app:startIconDrawable="@drawable/picture_ic_lock"
         app:endIconMode="clear_text"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/usernameRegister">
+           app:layout_constraintHorizontal_bias="0.0"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@+id/usernameRegister">
 
-        <com.google.android.material.textfield.TextInputEditText
+           <com.google.android.material.textfield.TextInputEditText
 
-            android:id="@+id/passwordRegisterEdit"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:maxLength="20" />
-    </com.google.android.material.textfield.TextInputLayout>
+               android:id="@+id/passwordRegisterEdit"
+               android:layout_width="match_parent"
+               android:inputType="textPassword"
+               android:layout_height="50dp"
+               android:maxLength="20" />
+       </com.google.android.material.textfield.TextInputLayout>
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/passwordRegister2"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
-        android:layout_marginEnd="32dp"
-        android:hint="Enter password again"
-        app:counterEnabled="true"
-        app:counterMaxLength="20"
-        app:endIconMode="clear_text"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordRegister">
+       <com.google.android.material.textfield.TextInputLayout
+           android:id="@+id/passwordRegister2"
+           style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+           android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+           android:layout_marginStart="32dp"
+           android:layout_marginEnd="32dp"
+           android:hint="Enter password again"
+           app:startIconDrawable="@drawable/picture_ic_lock"
 
-        <com.google.android.material.textfield.TextInputEditText
+           app:counterEnabled="true"
+           app:counterMaxLength="20"
+           app:endIconMode="clear_text"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintHorizontal_bias="0.0"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@+id/passwordRegister">
 
-            android:id="@+id/passwordRegisterEdit2"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:maxLength="20" />
-    </com.google.android.material.textfield.TextInputLayout>
+           <com.google.android.material.textfield.TextInputEditText
+
+               android:id="@+id/passwordRegisterEdit2"
+               android:layout_width="match_parent"
+               android:inputType="textPassword"
+               android:layout_height="50dp"
+               android:maxLength="20" />
+       </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/button_done_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
         android:onClick="onClickLogin"
         android:text="register"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordRegister" />
 
-    <TextView
-        android:id="@+id/textview_password_error"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/red"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/passwordRegister2" />
+       <TextView
+           android:id="@+id/textview_password_error"
+           android:layout_width="wrap_content"
+           android:layout_height="wrap_content"
+           android:textColor="@color/red"
+           android:textSize="18sp"
+           android:textStyle="bold"
+           app:layout_constraintEnd_toEndOf="parent"
+           app:layout_constraintStart_toStartOf="parent"
+           app:layout_constraintTop_toBottomOf="@+id/passwordRegister2" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+   </androidx.constraintlayout.widget.ConstraintLayout>

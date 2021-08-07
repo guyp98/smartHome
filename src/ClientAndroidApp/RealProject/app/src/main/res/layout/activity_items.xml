@@ -7,17 +7,20 @@
     tools:context=".Items"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="16dp"
-    >
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingBottom="16dp">
+
 
     <TextView
+        android:paddingTop="16dp"
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
         android:text="@string/simple_list"
         android:textColor="@color/teal_700"
-        android:textSize="32sp"
-        android:layout_marginBottom="5dp"/>
+        android:textSize="32sp" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

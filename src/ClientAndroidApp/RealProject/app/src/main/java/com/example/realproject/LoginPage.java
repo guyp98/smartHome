@@ -25,7 +25,9 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     private TextView outputFromServer;
     private OkHttpClient client;
     public static String store,username;
+    public static Integer runningId=0;
     public static WebSocket ws;
+    public static boolean testing=true;
 
 
 
@@ -50,35 +52,30 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
         outputFromServer = findViewById(R.id.TextViewFromServer);
 
         client = new OkHttpClient();
-        Request request = new Request.Builder().url("ws://echo.websocket.org").build();
-        //Request request = new Request.Builder().url("ws://cthulhuserver.duckdns.org:5050").build();
+        Request request;
+        if (testing)
+            request = new Request.Builder().url("ws://echo.websocket.org").build();
+        else
+            request = new Request.Builder().url("ws://cthulhuserver.duckdns.org:5001").build();
         EchoWebSocketListener listener = new EchoWebSocketListener();
-        ws = client.newWebSocket(request,listener );
-
-
-
+        ws = client.newWebSocket(request, listener);
     }
 
     public void onClickLogin (View view) throws JSONException {
 
-        if(view.getId()== login.getId())
+         if(view.getId()== login.getId())
         {
 
             username = usernameTil.getEditText().getText().toString();
             String password = passwordTil.getEditText().getText().toString();
+            String jsonLoginStr;
+            if(LoginPage.testing)
+                jsonLoginStr="{messageType:loginResponse, loggedIn:true, username:"+username+", password :"+password+"}";
+            else
+                jsonLoginStr="{messageType:login ,username:"+username+", password :"+password+"}";
 
-            String jsonLoginStr="{messageType:loginResponse, loggedIn:true, username:"+username+", password :"+password+"}";
 
             JSONObject jsonLogin= new JSONObject(jsonLoginStr);
-
-            if (username.equals("close"))
-            {
-                ws.close(1000,"goodbye");
-
-                client.dispatcher().executorService().shutdown();
-
-
-            }
             ws.send(jsonLogin.toString());
             //Toast.makeText(LoginPage.this,"username "+ username +" password" + password,Toast.LENGTH_SHORT).show();
         }
