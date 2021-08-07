@@ -1,5 +1,7 @@
 //this file is responseble to manage user data
 
+const result = require("./result");
+
 
 const usersMap=new Map(); //username => User
 
@@ -8,20 +10,25 @@ const parseUserAndPassword=(msg)=>{//connverts user messege to user name and pas
 }
 const addUser=(userName,password,type)=>{//register new user
     try{
-        if(tryToConnect(userName,password)||usersMap.has(userName)){
-            return false;
+        if(usersMap.has(userName)){
+            return result.makeFailure("already exist");
         }
         userObj=new User(userName,password,type)
         usersMap.set(userName,userObj);
-        return true;
+        return result.makeOk("register successful");
     }
     catch(msg){
-        return false; 
+        console.log(msg);
+        return result.makeFailure("cant add user");
+        
     }
     
 }
 const authenticate=(userName,password)=>{ 
     userObj=usersMap.get(userName);
+    if(!userObj){
+        return false;
+        }
     return password==userObj.password;
 }
 const tryConnectUser=(userName,password)=>{
@@ -63,7 +70,10 @@ const addDataToUser=(username,dataArray)=>{
         }
         userObj.userData.concat(toAdd);
     });
-
+}
+const getUserData=(username)=>{
+    userObj=usersMap.get(username);
+    return userObj.userData;
 }
 class User{
     constructor(username,password,roleName){
@@ -79,8 +89,8 @@ class User{
 const tryToConnect="login"; //{"messageType":"","username":"","password":""} try to connect user
 const echo="echo";//{"messageType":"","toEcho":""} echo user msg
 const usersComunnication="userCommand";//{"messageType":"","sendTo":"","msg":""} user send command to smartXXXX
-const register="register";
-const giveUserData="ItemsDataInitialise";
+const register="register";//{messageType:"registerResponse",registered:true,errorDetails:"register successful"}
+const giveUserData="itemsDataInitialise";//{messageType:":ItemsDataInitialiseResponse",username:"",password:"",type:"" }
 const all=[tryToConnect,echo,usersComunnication,register,giveUserData];//all- can use all functions
 
 class role{//all the user permissions
@@ -115,7 +125,10 @@ const isRole=(userName,roleType)=>{
     return userRole.type==roleType;
 }
 
-module.exports={isRole,canAccess,parseUserAndPassword,addUser,authenticate,tryConnectUser,disconnect,isConnected,tryToConnect,echo, usersComunnication,register,giveUserData};
+module.exports={isRole,getUserData,addDataToUser,canAccess,
+    parseUserAndPassword,addUser,authenticate,tryConnectUser,disconnect,
+    isConnected,tryToConnect,echo, usersComunnication,register,giveUserData
+};
 
 addUser("guy","porat","user");
 addUser("guy2","porat2","user");

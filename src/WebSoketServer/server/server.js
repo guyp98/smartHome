@@ -12,6 +12,7 @@ wsServer.on('connection', async function echoHandler(socket){
     addMsgToPrint("A client just connected, "+wsServer.clients.size+" clients connected");
 
     socket.on('message',async function (msg) {
+        //addMsgToPrint(msg);
         interpetMsg(msg,user,socket);
     });
     
@@ -21,6 +22,7 @@ wsServer.on('connection', async function echoHandler(socket){
     });
 
     socket.on('send message to user',async function (username,JsonMsg) {
+        //addMsgToPrint(JSON.stringify(JsonMsg));
         if(username==user.username){
             socket.send(JSON.stringify(JsonMsg));
         }
@@ -33,10 +35,10 @@ function interpetMsg(msg,user,socket){//take msg string and user- and return ast
     try{
         const inputObj=JSON.parse(msg);
         if(!Users.isConnected(user.username)&&inputObj.messageType!=Users.tryToConnect&&inputObj.messageType!=Users.register){//if user is not connected the only option is to try to connect
-            userSocket.emit('send message to user',user.username,{messageType:parseErorr,content: "you need to login first"});/**todo need be jason */
+            socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you need to login first"});/**todo need be jason */
         }
         else if(Users.isConnected(user.username) && !Users.canAccess(user.username,inputObj.messageType)){
-            userSocket.emit('send message to user',user.username,{messageType:parseErorr,content: "you dont have permition for this command"});
+            socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you dont have permition for this command"});
         }
         else{
             handleMsg(inputObj,user,socket);
@@ -44,7 +46,7 @@ function interpetMsg(msg,user,socket){//take msg string and user- and return ast
     }
     catch(msg){
         addMsgToPrint("cant parse user:("+user.username+")massage. stack trace "+msg);//todo create print manager to the server
-        userSocket.emit('send message to user',user.username,{messageType:parseErorr,content:"message interpetion error"}); 
+        socket.emit('send message to user',user.username,{messageType:parseErorr,content:"message interpetion error"}); 
     }
 }
 
@@ -56,10 +58,10 @@ function handleMsg(inputObj,user,userSocket){
             if(Users.tryConnectUser(inputObj.username,inputObj.password)){
                 user.username=inputObj.username;
                 addMsgToPrint(user.username+" logedin");
-                userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedin:true,errorDetails:"Login succesfull" });
+                userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:true,errorDetails:"Login succesfull" });
             }
             else{
-                userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedin:false,errorDetails:"wrong username or password or user already connected"});
+                userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:false,errorDetails:"wrong username or password or user already connected"});
             }
             break;
 
@@ -74,19 +76,14 @@ function handleMsg(inputObj,user,userSocket){
             break;
 
         case Users.register:
-            if(Users.addUser(inputObj.username,inputObj.password,inputObj.type)){
-                userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:true,errorDetails:"register successful"});
-            }
-            else{
-                userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:false,errorDetails:"register faild"});
-            }
+            var result=Users.addUser(inputObj.username,inputObj.password,inputObj.type);
+            userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:result.localeCompare("register successful"),errorDetails:result});
             break;
         
         case Users.giveUserData:
-            //
-            //
-            //
-            //
+            userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",appliances:Users.getUserData(user.username) });
+            break;
+
         default:
             return userSocket.emit('send message to user',user.username,{messageType:parseErorr,content:"no message with this type"}); 
 
