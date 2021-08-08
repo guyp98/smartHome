@@ -87,13 +87,12 @@ const addApplianceToUser=(username,detailes)=>{
         var maxId=-1;
         if(userObj.userData.length!=0){
             userObj.userData.forEach(oldItem=>{
-                if(maxId<oldItem.Id){
+                if(maxId<oldItem.id){
                     maxId=oldItem.id;
-                    oldItem.details=newItem.details;
                 }
             }); 
         }
-        else{maxId=1;}
+        else{maxId=0;}
         //add the data to user
         userObj.userData.push({id:maxId+1,detail:detailes});
         return result.makeOk([maxId+1,"data added succesfuley"]); 

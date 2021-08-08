@@ -15,6 +15,15 @@ const ws = new WebSocket(serverAddress, {
 
 ws.on('open', function() {
     ws.send("{\"messageType\":\"login\",\"username\":\"guy\",\"password\":\"porat\"}");
+    ws.send("{\"messageType\":\"register\",\"username\":\"Dan\",\"password\":\"rotman\",\"type\":\"user\"}");
+    ws.send("{\"messageType\":\"login\",\"username\":\"Dan\",\"password\":\"ddd\"}");
+    ws.send("{\"messageType\":\"login\",\"username\":\"Dan\",\"password\":\"rotman\"}");
+    ws.send("{\"messageType\":\"itemsDataInitialise\",\"username\":\"Dan\"}");
+    ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"}}");
+    ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"}}");
+    ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"}}");
+    ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"}}");
+    ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"guy2\",\"msg\":\""+"hi"+"\"}");
 });
 ws.addEventListener('send',async function(){
     const x ="hi guy2";
