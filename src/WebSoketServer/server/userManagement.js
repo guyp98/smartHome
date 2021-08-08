@@ -27,23 +27,31 @@ const addUser=(userName,password,type)=>{//register new user
 const authenticate=(userName,password)=>{ 
     userObj=usersMap.get(userName);
     if(!userObj){
-        return false;
+        return result.makeFailure("no user with this user name");
         }
-    return password==userObj.password;
+    return password==userObj.password?result.makeOk(""):result.makeFailure("password incorrect");
 }
 const tryConnectUser=(userName,password)=>{
-    if(authenticate(userName,password) && !isConnected(userName)){
-        userObj=usersMap.get(userName);
-        userObj.Connected=true;
-        return true;
+    var auth=authenticate(userName,password);
+    if(result.isOk(auth)){
+        var isconn=isConnected(userName);
+        if( !result.isOk(isconn)){
+            userObj=usersMap.get(userName);
+            if(userObj==undefined){return result.makeFailure("user not exist")}
+            userObj.Connected=true;
+            return result.makeOk("login successful");
+        }
+        return result.makeFailure("user already connected")
     }
-    return false;
+    return auth;
 }
 const disconnect=(userName)=>{
     userObj=usersMap.get(userName);
-    userObj.Connected=false;
-    
+    if(userObj==undefined){return result.makeFailure("user not exist")}
+    userObj.Connected=false; 
+    return result.makeOk("user disconnected");
 }
+
 const isConnected=(userName)=>{
     userObj=usersMap.get(userName);
     if(userObj!=undefined){
@@ -66,10 +74,49 @@ const addDataToUser=(username,dataArray)=>{
             }
         });
         if(!found){
-            toAdd.push(newItem.details);
+            toAdd.push(newItem);
         }
         userObj.userData.concat(toAdd);
     });
+}
+const addApplianceToUser=(username,detailes)=>{
+    try{
+        userObj=usersMap.get(username);
+        
+        //create new id for detailes
+        var maxId=-1;
+        if(userObj.userData.length!=0){
+            userObj.userData.forEach(oldItem=>{
+                if(maxId<oldItem.Id){
+                    maxId=oldItem.id;
+                    oldItem.details=newItem.details;
+                }
+            }); 
+        }
+        else{maxId=1;}
+        //add the data to user
+        userObj.userData.push({id:maxId+1,detail:detailes});
+        return result.makeOk([maxId+1,"data added succesfuley"]); 
+    }
+    catch(err){
+        return result.makeFailure([-1,err]);
+    }
+}
+const removeApplianceToUser=(username,id)=>{
+    try{
+        userObj=usersMap.get(username);
+        
+        for(var i=0;i<userObj.userData.length;i++){
+            if(id==userObj.userData[i].id){
+                userObj.userData.splice(i,1);
+                return result.makeOk([maxId+1,"data removed succesfuley"]);
+            }
+        }
+        return result.makeFailure("cant remove data (id probably wrong)");
+    }
+    catch(err){
+        return result.makeFailure(err);
+    }
 }
 const getUserData=(username)=>{
     userObj=usersMap.get(username);
@@ -90,8 +137,10 @@ const tryToConnect="login"; //{"messageType":"","username":"","password":""} try
 const echo="echo";//{"messageType":"","toEcho":""} echo user msg
 const usersComunnication="userCommand";//{"messageType":"","sendTo":"","msg":""} user send command to smartXXXX
 const register="register";//{messageType:"registerResponse",registered:true,errorDetails:"register successful"}
-const giveUserData="itemsDataInitialise";//{messageType:":ItemsDataInitialiseResponse",username:"",password:"",type:"" }
-const all=[tryToConnect,echo,usersComunnication,register,giveUserData];//all- can use all functions
+const giveUserData="itemsDataInitialise";//{messageType:":",username:"",password:"",type:"" }
+const addAppliance="addAppliance";//{messageType:":",details:"" }
+const removeAppliance="removeAppliance";//{messageType:":",id:"" }
+const all=[tryToConnect,echo,usersComunnication,register,giveUserData,addAppliance,removeAppliance];//all- can use all functions
 
 class role{//all the user permissions
     constructor(type){
@@ -103,7 +152,7 @@ class role{//all the user permissions
                 this.permissions=[tryToConnect,usersComunnication,register];
                 break;
             case "user":
-                this.permissions=[tryToConnect,usersComunnication,echo,register,giveUserData];
+                this.permissions=[tryToConnect,usersComunnication,echo,register,giveUserData,addAppliance,removeAppliance];
                 break;
             case "admin":
                 this.permissions=all;
@@ -124,10 +173,13 @@ const isRole=(userName,roleType)=>{
     let userRole=usersMap.get(userName).role;
     return userRole.type==roleType;
 }
+const isFunExist=(funType)=>{
+    return all.includes(funType);
+}
 
-module.exports={isRole,getUserData,addDataToUser,canAccess,
-    parseUserAndPassword,addUser,authenticate,tryConnectUser,disconnect,
-    isConnected,tryToConnect,echo, usersComunnication,register,giveUserData
+module.exports={isRole,getUserData,canAccess,
+    parseUserAndPassword,addUser,authenticate,tryConnectUser,removeApplianceToUser,disconnect,
+    isConnected,addApplianceToUser,tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,isFunExist
 };
 
 addUser("guy","porat","user");

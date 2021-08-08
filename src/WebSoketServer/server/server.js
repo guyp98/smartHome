@@ -3,6 +3,7 @@
 const WebSocket=require('ws');
 const { addMsgToPrint } = require('./serverLogs');
 const Users=require('./userManagement');
+const result = require("./result");
 
 const PORT = 5001;
 const wsServer = new WebSocket.Server({port: PORT});
@@ -37,6 +38,9 @@ function interpetMsg(msg,user,socket){//take msg string and user- and return ast
         if(!Users.isConnected(user.username)&&inputObj.messageType!=Users.tryToConnect&&inputObj.messageType!=Users.register){//if user is not connected the only option is to try to connect
             socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you need to login first"});/**todo need be jason */
         }
+        else if(!Users.isFunExist(inputObj.messageType)){
+            socket.emit('send message to user',user.username,{messageType:parseErorr,content: "no message with this type"});
+        }
         else if(Users.isConnected(user.username) && !Users.canAccess(user.username,inputObj.messageType)){
             socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you dont have permition for this command"});
         }
@@ -55,14 +59,12 @@ function handleMsg(inputObj,user,userSocket){
     switch(inputObj.messageType){
         
         case Users.tryToConnect:
-            if(Users.tryConnectUser(inputObj.username,inputObj.password)){
+            var connected=Users.tryConnectUser(inputObj.username,inputObj.password);
+            if(result.isOk(connected)){
                 user.username=inputObj.username;
                 addMsgToPrint(user.username+" logedin");
-                userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:true,errorDetails:"Login succesfull" });
             }
-            else{
-                userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:false,errorDetails:"wrong username or password or user already connected"});
-            }
+            userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:result.isOk(connected),errorDetails:connected.msg });
             break;
 
         case Users.echo:
@@ -76,14 +78,22 @@ function handleMsg(inputObj,user,userSocket){
             break;
 
         case Users.register:
-            var result=Users.addUser(inputObj.username,inputObj.password,inputObj.type);
-            userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:result.localeCompare("register successful"),errorDetails:result});
+            var res=Users.addUser(inputObj.username,inputObj.password,inputObj.type);
+            userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:result.isOk(res),errorDetails:res.msg});
             break;
         
         case Users.giveUserData:
             userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",appliances:Users.getUserData(user.username) });
             break;
-
+        case Users.addAppliance:
+            var res=Users.addApplianceToUser(user.username,inputObj.details);
+            userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res),itemId:(res.msg)[0],errorDetails:(res.msg)[1]});
+            break;
+        case Users.removeAppliance:
+            var res=Users.removeApplianceToUser(user.username,inputObj.id);
+            userSocket.emit('send message to user',user.username,{messageType:"removeApplianceResponse",removed:result.isOk(res),errorDetails:res.msg});
+            break;
+            
         default:
             return userSocket.emit('send message to user',user.username,{messageType:parseErorr,content:"no message with this type"}); 
 

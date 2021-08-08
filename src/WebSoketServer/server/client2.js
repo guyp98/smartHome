@@ -18,8 +18,8 @@ ws.on('open', function() {
 });
 ws.addEventListener('send',function(){
     const x ="hi guy";
-   // ws.send("{\"messageType\":\"echo\",\"toEcho\":\""+x+"\"}");
-    ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"guy\",\"msg\":\""+x+"\"}");//{"messageType":"","sendTo":"","msg":""} 
+    ws.send("{\"messageType\":\"echo\",\"toEcho\":\""+x+"\"}");
+    //ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"guy\",\"msg\":\""+x+"\"}");//{"messageType":"","sendTo":"","msg":""} 
     });
 ws.on('message', function(msg) {
     console.log("Received msg from the server: " + msg);

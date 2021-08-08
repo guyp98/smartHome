@@ -23,6 +23,6 @@ ws.addEventListener('send',async function(){
     });
 ws.on('message', function(msg) {
     console.log("Received msg from the server: " + msg);
-    ws.emit('send');
+    //ws.emit('send');
 });
 ws.on('close',function(){console.log("server closed" );})
