@@ -13,7 +13,7 @@ wsServer.on('connection', async function echoHandler(socket){
     addMsgToPrint("A client just connected, "+wsServer.clients.size+" clients connected");
 
     socket.on('message',async function (msg) {
-        //addMsgToPrint(msg);
+        addMsgToPrint(msg);
         interpetMsg(msg,user,socket);
     });
     
@@ -23,7 +23,7 @@ wsServer.on('connection', async function echoHandler(socket){
     });
 
     socket.on('send message to user',async function (username,JsonMsg) {
-        //addMsgToPrint(JSON.stringify(JsonMsg));
+        addMsgToPrint(JSON.stringify(JsonMsg));
         if(username==user.username){
             socket.send(JSON.stringify(JsonMsg));
         }
@@ -83,7 +83,7 @@ function handleMsg(inputObj,user,userSocket){
             break;
         
         case Users.giveUserData:
-            userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",appliances:Users.getUserData(user.username) });
+            userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",success:true,appliances:Users.getUserData(user.username) });
             break;
         case Users.addAppliance:
             var res=Users.addApplianceToUser(user.username,inputObj.details);

@@ -26,3 +26,11 @@ ws.on('message', function(msg) {
     //ws.emit('send');
 });
 ws.on('close',function(){console.log("server closed" );})
+
+
+//{"messageType":"register","username":"Dan","password":"rotman","type":"user"}
+//{"messageType":"login","username":"Dan","password":"ddd"}
+//{"messageType":"login","username":"Dan","password":"rotman"}
+//{"messageType":"itemsDataInitialise","username":"Dan"}
+//{"messageType":"addAppliance","details":{"area":"Guy","desc":"Light"}}
+//
