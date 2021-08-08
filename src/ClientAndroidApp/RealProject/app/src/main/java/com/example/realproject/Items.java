@@ -21,7 +21,7 @@ public class Items extends AppCompatActivity {
     private ArrayList<String> area, desc;
     private ArrayList<Integer> progImag, idList;
     private String areaString, descString, state;
-    private ListView items;
+    private ListView itemsListView;
     private boolean canRemove;
     private int positionSaver,loadedIndex,idInt;
     //SharedPreferences sharedPreferences;
@@ -67,18 +67,25 @@ public class Items extends AppCompatActivity {
             }
 
 
-            items = findViewById(R.id.listViewItems);
-            programAdapter = new ProgramAdapter(this, area, progImag, desc);
-            items.setAdapter(programAdapter);
-
-
-            items.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            itemsListView = findViewById(R.id.listViewItems);
+            itemsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     positionSaver = position;
+                    Toast.makeText(Items.this, "Clicked at positon = " + position, Toast.LENGTH_SHORT).show();
+
                     Toast.makeText(Items.this, "you clicked" + position, Toast.LENGTH_SHORT).show();
                 }
             });
+            programAdapter = new ProgramAdapter(this, area, progImag, desc);
+            itemsListView.setAdapter(programAdapter);
+
+            area.add("Dan");
+            desc.add("Light");
+            progImag.add(R.drawable.picture_lightbuldyellow);
+            programAdapter.notifyDataSetChanged();
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -103,7 +110,7 @@ public class Items extends AppCompatActivity {
     }
 
 
-    public void onButtonClick(View view) throws JSONException {
+    public void onButtonClickItems(View view) throws JSONException {
         if (view.getId() == R.id.buttonAdd) {
 
 
@@ -111,7 +118,7 @@ public class Items extends AppCompatActivity {
             startActivityForResult(itemsAct, 1);
 
         }
-        if (view.getId() == R.id.buttonRemove && positionSaver != -1) {
+        else if (view.getId() == R.id.buttonRemove && positionSaver != -1) {
 
             String jsonRemoveAppliaceStr;
             if(LoginPage.testing)
@@ -132,6 +139,12 @@ public class Items extends AppCompatActivity {
             //todo notify Guy
             positionSaver = -1;
             programAdapter.notifyDataSetChanged();
+        }
+        //on click invisible
+        else
+        {
+            positionSaver= view.getId();
+
         }
 
 

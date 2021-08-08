@@ -30,7 +30,7 @@ public class MainMenu extends AppCompatActivity {
         loadingPage = new LoadingPage(MainMenu.this);
         itemsButton = findViewById(R.id.buttonItems);
         buttonCombos= findViewById(R.id.buttonCombos);
-        errorLoading = findViewById(R.id.error_loading_items);
+        // errorLoading = findViewById(R.id.error_loading_items);
 
     }
 

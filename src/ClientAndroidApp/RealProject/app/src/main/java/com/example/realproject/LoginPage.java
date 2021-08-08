@@ -27,7 +27,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     public static String store,username;
     public static Integer runningId=0;
     public static WebSocket ws;
-    public static boolean testing=true;
+    public static boolean testing=false;
 
 
 
