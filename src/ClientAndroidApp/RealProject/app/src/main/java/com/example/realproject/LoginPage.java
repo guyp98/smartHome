@@ -3,6 +3,9 @@ package com.example.realproject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -27,7 +30,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     public static String store,username;
     public static Integer runningId=0;
     public static WebSocket ws;
-    public static boolean testing=false;
+    public static boolean testing=true;
 
 
 
@@ -50,6 +53,8 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
         login = findViewById(R.id.button_done_register);
         register = findViewById(R.id.button_register);
         outputFromServer = findViewById(R.id.TextViewFromServer);
+
+
 
         client = new OkHttpClient();
         Request request;

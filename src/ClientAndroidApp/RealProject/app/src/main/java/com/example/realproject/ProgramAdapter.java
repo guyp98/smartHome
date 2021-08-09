@@ -5,10 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import java.util.ArrayList;
 
@@ -20,7 +16,7 @@ public class ProgramAdapter extends ArrayAdapter<String> {
 
 
     public ProgramAdapter(Context context, ArrayList<String> progName, ArrayList<Integer> images, ArrayList<String> programDesc) {
-        super(context, R.layout.listview_singleitem2,R.id.textView1, progName);
+        super(context, R.layout.listview_items,R.id.textView1, progName);
         this.context = context;
         this.images=images;
         this.progName=progName;
@@ -34,7 +30,7 @@ public class ProgramAdapter extends ArrayAdapter<String> {
         if(singleItem==null)
         {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            singleItem = layoutInflater.inflate(R.layout.listview_singleitem2,parent,false);
+            singleItem = layoutInflater.inflate(R.layout.listview_items,parent,false);
             holder = new ProgramViewHolder(singleItem);
             singleItem.setTag(holder);
         }

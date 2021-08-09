@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="horizontal"
     android:visibility="visible"
+    android:descendantFocusability="blocksDescendants"
     tools:visibility="visible">
 
     <ImageView
@@ -13,7 +14,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_margin="10dp"
-        app:srcCompat="@drawable/picture_lightbuldyellow" />
+        android:src="@drawable/picture_lightbuldyellow" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -73,7 +74,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/switchAplliance"
             app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/ic_baseline_chevron_right_24" />
+            android:src="@drawable/ic_baseline_chevron_right_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

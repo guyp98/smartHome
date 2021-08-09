@@ -45,7 +45,7 @@ public class MainMenu extends AppCompatActivity {
                 }
 
                 else{
-                    if(loadedIndex <20) {
+                    if(loadedIndex <300) {
                         loadedIndex++;
                         checkIfLoaded(handler, itemsAct);
                     }

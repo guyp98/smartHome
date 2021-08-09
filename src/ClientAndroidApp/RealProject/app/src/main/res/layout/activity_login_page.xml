@@ -14,6 +14,8 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="50dp"
         android:layout_marginEnd="32dp"
+        app:backgroundTint="@color/blue"
+
         android:hint="Username"
         app:counterEnabled="true"
         app:counterMaxLength="20"
@@ -62,6 +64,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:onClick="onClickLogin"
+
         android:text="Login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -71,6 +74,8 @@
         android:id="@+id/button_register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:backgroundTint="@color/blue"
+
         android:layout_marginTop="20dp"
         android:text="Register"
         android:onClick="onClickLogin"

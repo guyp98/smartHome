@@ -18,11 +18,13 @@ import java.util.ArrayList;
 
 public class Items extends AppCompatActivity {
 
+    public static final int AddScreen=1,EditItems=2;
     private ArrayList<String> area, desc;
     private ArrayList<Integer> progImag, idList;
     private String areaString, descString, state;
     private ListView itemsListView;
     private boolean canRemove;
+    private Intent editItemsIntent;
     private int positionSaver,loadedIndex,idInt;
     //SharedPreferences sharedPreferences;
     //haredPreferences.Editor editor;
@@ -42,7 +44,6 @@ public class Items extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_items);
 
-
             area = new ArrayList<>();
             desc = new ArrayList<>();
             progImag = new ArrayList<>();
@@ -56,25 +57,26 @@ public class Items extends AppCompatActivity {
                 for (int i = 0; i < jsonArray.length(); i++) {
                     JSONObject applian = jsonArray.getJSONObject(i);
                     idInt = applian.getInt("id");
-                    String details= applian.getString("details");
-                    JSONObject jsonSingleAppliance = new JSONObject(LoginPage.store);
-                    areaString = jsonSingleAppliance.getString("applianceName");
-                    descString = jsonSingleAppliance.getString("applianceDescription");
+                    String details= applian.getString("detail");
+                    JSONObject jsonSingleAppliance = new JSONObject(details);
+                    areaString = jsonSingleAppliance.getString("area");
+                    descString = jsonSingleAppliance.getString("desc");
                     //state = jsonSingleAppliance.getString("state");
 
                     addItemToList(areaString, descString,idInt);
                 }
             }
-
-
+            editItemsIntent = new Intent(this,EditItem.class);
             itemsListView = findViewById(R.id.listViewItems);
             itemsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     positionSaver = position;
-                    Toast.makeText(Items.this, "Clicked at positon = " + position, Toast.LENGTH_SHORT).show();
+                    editItemsIntent.putExtra("areaInput",area.get(position));
+                    editItemsIntent.putExtra("picture",progImag.get(position));
+                    startActivityForResult(editItemsIntent, Items.EditItems);
 
-                    Toast.makeText(Items.this, "you clicked" + position, Toast.LENGTH_SHORT).show();
+                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 }
             });
             programAdapter = new ProgramAdapter(this, area, progImag, desc);
@@ -82,7 +84,7 @@ public class Items extends AppCompatActivity {
 
             area.add("Dan");
             desc.add("Light");
-            progImag.add(R.drawable.picture_lightbuldyellow);
+            progImag.add(R.drawable.picture_bulb_2_small);
             programAdapter.notifyDataSetChanged();
 
 
@@ -91,11 +93,18 @@ public class Items extends AppCompatActivity {
         }
     }
 
+
+    public void changeName (int position, String areaString ){
+        area.set(position,areaString);
+        programAdapter.notifyDataSetChanged();
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == 1) {
+        if (requestCode == Items.AddScreen) {
             if (resultCode == RESULT_OK) {
                 String areaString = data.getStringExtra("area");
                 String typeString = data.getStringExtra("type");
@@ -107,15 +116,24 @@ public class Items extends AppCompatActivity {
 
             }
         }
+        if (requestCode == Items.EditItems) {
+            if (resultCode == RESULT_OK) {
+                Boolean changed = data.getBooleanExtra("changed",false);
+                if(changed) {
+                    String areaString = data.getStringExtra("area");
+                    changeName(positionSaver, areaString);
+                }
+
+
+            }
+        }
     }
 
 
     public void onButtonClickItems(View view) throws JSONException {
         if (view.getId() == R.id.buttonAdd) {
-
-
             Intent itemsAct = new Intent(Items.this, AddScreen.class);
-            startActivityForResult(itemsAct, 1);
+            startActivityForResult(itemsAct, Items.AddScreen);
 
         }
         else if (view.getId() == R.id.buttonRemove && positionSaver != -1) {
@@ -187,9 +205,12 @@ public class Items extends AppCompatActivity {
         desc.add(descString);
         idList.add(id);
         if (descString.equals("Light"))
-            progImag.add(R.drawable.picture_lightbuldyellow);
-        else if (descString.equals("Water Heater"))
+            progImag.add(R.drawable.picture_bulb_2_small);
+        /*else if (descString.equals("Water Heater"))
+            progImag.add(R.drawable.picture_boiling_water);*/
+        else
             progImag.add(R.drawable.picture_boiling_water);
+
 
 
     }
