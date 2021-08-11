@@ -4,39 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
     tools:context=".EditItem">
 
-    <Button
-        android:id="@+id/button_items_return"
-        android:layout_width="80dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:onClick="back"
-        android:text="Items"
-        android:textAllCaps="false"
-
-        android:textColor="@color/darkGrey"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/button_edit_single_item"
-        android:layout_width="80dp"
-        android:layout_height="46dp"
-        android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:onClick="back"
-        android:text="Edit"
-        android:textAllCaps="false"
-        android:textColor="@color/darkGrey"
-        app:backgroundTint="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageView_Chevron_left_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="19dp"
@@ -44,8 +15,21 @@
         app:layout_constraintTop_toTopOf="parent"
         android:src="@drawable/ic_chevron_left_24" />
 
+    <Button
+        android:id="@+id/button_items_back2"
+        android:layout_width="80dp"
+        android:layout_height="46dp"
+        android:layout_marginTop="8dp"
+        android:background="?android:attr/selectableItemBackground"
+        android:onClick="onClickEdit"
+        android:text="Items"
+        android:textAllCaps="false"
+
+        android:textColor="@color/darkGrey"
+        app:layout_constraintStart_toEndOf="@+id/imageView_Chevron_left_info"
+        app:layout_constraintTop_toTopOf="parent" />
     <ImageView
-        android:id="@+id/imageView_appliance_kind"
+        android:id="@+id/imageView_edititem"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="100dp"
@@ -54,55 +38,29 @@
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/picture_lightbuldyellow" />
 
-    <TextView
-        android:id="@+id/textView_appliance_name"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/edittext_edit_item_name"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Dans Room"
-        android:textSize="20sp"
+        android:hint="Name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_appliance_kind" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView_edititem" />
 
     <Button
-        android:id="@+id/button_add_to_combo"
-        android:layout_width="275dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="53dp"
-        android:text="Add to combo"
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:text="Delete Contact"
         android:textAllCaps="false"
-        android:textSize="16dp"
+        android:textColor="@color/red"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        app:backgroundTint="@color/lightGrey"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_appliance_name" />
-
-    <Button
-        android:id="@+id/button_set_timer"
-        android:layout_width="275dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="8dp"
-        android:text="Set timer"
-        android:textAllCaps="false"
-
-        android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_add_to_combo" />
-
-    <TextView
-        android:id="@+id/textView_notes"
-        android:layout_width="275dp"
-        android:layout_height="137dp"
-        android:layout_marginTop="19dp"
-        android:background="@drawable/text_view_border"
-        android:text="   Notes"
-        android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_set_timer" />
-
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -32,7 +32,7 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Spinner
-        android:id="@+id/spinnerType"
+        android:id="@+id/spinner_type"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -42,20 +42,35 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textInputArea" />
 
+    <!-- <Spinner
+         android:id="@+id/spinner_username"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginStart="32dp"
+         android:layout_marginTop="10dp"
+         android:layout_marginEnd="32dp"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_bias="0.0"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/spinner_type" />-->
+
     <Button
         android:id="@+id/buttonAddFinal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginLeft="32dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="30dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:onClick="onButtonClick"
         android:text="Add"
+
+        android:textAllCaps="false"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinnerType" />
+        app:layout_constraintTop_toBottomOf="@+id/spinner_type" />
 
     <!--<com.google.android.material.textfield.TextInputLayout
         android:id="@+id/textInputType"

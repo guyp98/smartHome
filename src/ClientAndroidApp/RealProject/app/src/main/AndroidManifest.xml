@@ -13,6 +13,7 @@
         android:theme="@style/Theme.RealProject"
         android:usesCleartextTraffic="true">
         <activity android:name=".EditItem"></activity>
+        <activity android:name=".ItemInfo" />
         <activity android:name=".RegisterScreen" />
         <activity android:name=".LoadingPage" />
         <activity android:name=".MainMenu" />

@@ -18,7 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:text="@string/simple_list"
+        android:text="Appliance List"
         android:textColor="@color/teal_700"
         android:textSize="32sp" />
 
@@ -33,12 +33,15 @@
             android:id="@+id/buttonAdd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:onClick="onButtonClickItems"
             android:text="Add"
+            android:textAllCaps="false"
+            android:textSize="18dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/buttonRemove"
             app:layout_constraintStart_toStartOf="parent"
-            tools:ignore="MissingConstraints"
-            android:onClick="onButtonClickItems"
-            />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="MissingConstraints" />
 
         <Button
             android:id="@+id/buttonRemove"
@@ -46,14 +49,15 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="65dp"
             android:layout_marginRight="65dp"
-
-            android:text="Remove"
             android:onClick="onButtonClickItems"
+            android:text="Combos"
+            android:textAllCaps="false"
+            android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 
     <ListView
         android:id="@+id/listViewItems"

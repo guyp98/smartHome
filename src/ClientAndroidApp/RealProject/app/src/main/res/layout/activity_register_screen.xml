@@ -92,7 +92,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
         android:onClick="onClickLogin"
-        android:text="register"
+        android:text="Register"
+        android:textAllCaps="false"
+        android:textSize="18dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordRegister" />

@@ -3,28 +3,24 @@ package com.example.realproject;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import okhttp3.WebSocket;
-
 public class AddScreen extends AppCompatActivity {
     private TextInputLayout til;
-    private String[] types;
-    private Spinner dropDown;
+
+    private Spinner dropDowntype,dropDownUsername;
+    private String [] usernameArray;
     private int loadedIndex = 0;
 
     @Override
@@ -32,11 +28,13 @@ public class AddScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_screen);
         til = findViewById(R.id.textInputArea);
-        dropDown = findViewById(R.id.spinnerType);
+        dropDowntype = findViewById(R.id.spinner_type);
 
-        ArrayAdapter ar = new ArrayAdapter(this, R.layout.layout_dropdown_add, getResources().getStringArray(R.array.TypeOfAppliances));
-        ar.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        dropDown.setAdapter(ar);
+        //dropDownUsername = findViewById(R.id.spinner_username);
+        ArrayAdapter arType = new ArrayAdapter(this, R.layout.layout_dropdown_add, getResources().getStringArray(R.array.TypeOfAppliances));
+        //ArrayAdapter arUsername = new ArrayAdapter(this, R.layout.layout_dropdown_add, usernameArray);
+        arType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        dropDowntype.setAdapter(arType);
 
 
     }
@@ -64,7 +62,7 @@ public class AddScreen extends AppCompatActivity {
 
     public void onButtonClick(View view) {
         if (view.getId() == R.id.buttonAddFinal) {
-            String typeString = dropDown.getSelectedItem().toString();
+            String typeString = dropDowntype.getSelectedItem().toString();
             String areaString = til.getEditText().getText().toString();
             Toast.makeText(AddScreen.this, "you selected " + areaString, Toast.LENGTH_SHORT).show();
             Intent resultIntent = new Intent();
