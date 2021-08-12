@@ -1,5 +1,7 @@
 //this file is responseble to manage user data
 
+
+const { User,role,tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,all } = require("./commandAndRoles");
 const result = require("./result");
 
 
@@ -13,7 +15,7 @@ const addUser=(userName,password,type)=>{//register new user
         if(usersMap.has(userName)){
             return result.makeFailure("already exist");
         }
-        userObj=new User(userName,password,type)
+        userObj=new User(userName,password,type);
         usersMap.set(userName,userObj);
         return result.makeOk("register successful");
     }
@@ -79,7 +81,7 @@ const addDataToUser=(username,dataArray)=>{
         userObj.userData.concat(toAdd);
     });
 }
-const addApplianceToUser=(username,detailes)=>{
+const addApplianceToUser=(username,detailes,SentUsername/*aka appliance*/ )=>{
     try{
         userObj=usersMap.get(username);
         
@@ -94,7 +96,7 @@ const addApplianceToUser=(username,detailes)=>{
         }
         else{maxId=0;}
         //add the data to user
-        userObj.userData.push({id:maxId+1,detail:detailes});
+        userObj.userData.push({id:maxId+1,username:SentUsername,detail:detailes});
         return result.makeOk([maxId+1,"data added succesfuley"]); 
     }
     catch(err){
@@ -108,7 +110,7 @@ const removeApplianceToUser=(username,id)=>{
         for(var i=0;i<userObj.userData.length;i++){
             if(id==userObj.userData[i].id){
                 userObj.userData.splice(i,1);
-                return result.makeOk([maxId+1,"data removed succesfuley"]);
+                return result.makeOk([maxId+1,"data removed "]);
             }
         }
         return result.makeFailure("cant remove data (id probably wrong)");
@@ -121,48 +123,7 @@ const getUserData=(username)=>{
     userObj=usersMap.get(username);
     return userObj.userData;
 }
-class User{
-    constructor(username,password,roleName){
-        this.username=username;
-        this.password=password;
-        this.Connected=false;
-        this.role=new role(roleName);
-        this.userData=[];
-    }
-}
 
-//all functions names that users can use
-const tryToConnect="login"; //{"messageType":"","username":"","password":""} try to connect user
-const echo="echo";//{"messageType":"","toEcho":""} echo user msg
-const usersComunnication="userCommand";//{"messageType":"","sendTo":"","msg":""} user send command to smartXXXX
-const register="register";//{messageType:"registerResponse",registered:true,errorDetails:"register successful"}
-const giveUserData="itemsDataInitialise";//{messageType:":",username:"",password:"",type:"" }
-const addAppliance="addAppliance";//{messageType:":",details:"" }
-const removeAppliance="removeAppliance";//{messageType:":",id:"" }
-const all=[tryToConnect,echo,usersComunnication,register,giveUserData,addAppliance,removeAppliance];//all- can use all functions
-
-class role{//all the user permissions
-    constructor(type){
-        switch(type){
-            case "smartSwitch":
-                this.permissions=[tryToConnect,usersComunnication,register];
-                break;
-            case "smartSensor":
-                this.permissions=[tryToConnect,usersComunnication,register];
-                break;
-            case "user":
-                this.permissions=[tryToConnect,usersComunnication,echo,register,giveUserData,addAppliance,removeAppliance];
-                break;
-            case "admin":
-                this.permissions=all;
-                break;
-            default:
-                throw "error"//**todo** throw is not ideal need to find better solution for assignRole fail 
-        }
-        this.type=type;
-        
-    }
-}
 
 const canAccess=(userName,funcName)=>{
     let userRole=usersMap.get(userName).role;
@@ -176,10 +137,35 @@ const isFunExist=(funType)=>{
     return all.includes(funType);
 }
 
+const retrunAllAppliances=(ret)=>{
+    try{
+    var iterator=usersMap.values();
+    var appli=[];
+    var tempapp=iterator.next();
+    while(!tempapp.done){
+        if(ret==='type'){
+            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({useranme:tempapp.value.username,type:tempapp.value.role.type});
+        }
+        else if(ret==='state'){
+            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({useranme:tempapp.value.username,type:tempapp.value.role.power});
+        }
+        tempapp=iterator.next();
+    }
+    return result.makeOk(appli);
+    }
+    catch(msg){
+        return result.makeFailure(msg);
+    } 
+}
+
+
+
+
 module.exports={isRole,getUserData,canAccess,
     parseUserAndPassword,addUser,authenticate,tryConnectUser,removeApplianceToUser,disconnect,
-    isConnected,addApplianceToUser,tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,isFunExist
+    isConnected,addApplianceToUser,isFunExist,retrunAllAppliances: retrunAllAppliances
 };
 
 addUser("guy","porat","user");
 addUser("guy2","porat2","user");
+

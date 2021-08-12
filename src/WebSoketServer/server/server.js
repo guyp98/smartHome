@@ -4,13 +4,17 @@ const WebSocket=require('ws');
 const { addMsgToPrint } = require('./serverLogs');
 const Users=require('./userManagement');
 const result = require("./result");
+const { tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,getAllAppliances } = require('./commandAndRoles');
 
 const PORT = 5001;
 const wsServer = new WebSocket.Server({port: PORT});
 
 wsServer.on('connection', async function echoHandler(socket){
+    socket.isAlive = true;
+
     let user={username:""};
     addMsgToPrint("A client just connected, "+wsServer.clients.size+" clients connected");
+    
 
     socket.on('message',async function (msg) {
         addMsgToPrint(msg);
@@ -21,6 +25,7 @@ wsServer.on('connection', async function echoHandler(socket){
         if(user.username!=""){Users.disconnect(user.username);}
         addMsgToPrint('Client disconnected, '+wsServer.clients.size+" clients connected");
     });
+    
 
     socket.on('send message to user',async function (username,JsonMsg) {
         addMsgToPrint(JSON.stringify(JsonMsg));
@@ -28,14 +33,28 @@ wsServer.on('connection', async function echoHandler(socket){
             socket.send(JSON.stringify(JsonMsg));
         }
     });
-});
 
+    socket.on('pong', function(){socket.isAlive=true});
+});
+// checks if connections alive 
+const interval = setInterval(function ping() {
+    wsServer.clients.forEach(function each(socket) {
+      if (socket.isAlive === false) return socket.terminate();
+  
+      socket.isAlive = false;
+      socket.ping(()=>{});
+    });
+  }, 20000);
+
+wsServer.on('close', function close() {
+    clearInterval(interval);
+});
 const parseErorr="parseErorr";//{"messageType":"","content":""}when the server cant parse user message
 
 function interpetMsg(msg,user,socket){//take msg string and user- and return astring to send back to the user
     try{
         const inputObj=JSON.parse(msg);
-        if(!Users.isConnected(user.username)&&inputObj.messageType!=Users.tryToConnect&&inputObj.messageType!=Users.register){//if user is not connected the only option is to try to connect
+        if(!Users.isConnected(user.username)&&inputObj.messageType!=tryToConnect&&inputObj.messageType!=register){//if user is not connected the only option is to try to connect
             socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you need to login first"});/**todo need be jason */
         }
         else if(!Users.isFunExist(inputObj.messageType)){
@@ -58,7 +77,7 @@ function interpetMsg(msg,user,socket){//take msg string and user- and return ast
 function handleMsg(inputObj,user,userSocket){
     switch(inputObj.messageType){
         
-        case Users.tryToConnect:
+        case tryToConnect:
             var connected=Users.tryConnectUser(inputObj.username,inputObj.password);
             if(result.isOk(connected)){
                 user.username=inputObj.username;
@@ -67,32 +86,37 @@ function handleMsg(inputObj,user,userSocket){
             userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:result.isOk(connected),errorDetails:connected.msg });
             break;
 
-        case Users.echo:
+        case echo:
             userSocket.emit('send message to user',user.username,{messageType:"echoResponse",message:inputObj.toEcho });
             break;
 
-        case Users.usersComunnication:
+        case usersComunnication:
             wsServer.clients.forEach(function(socket){
                 socket.emit('send message to user',inputObj.sendTo,{messageType:"usersCommunication",from:user.username,message:inputObj.msg });
             }); 
             break;
 
-        case Users.register:
+        case register:
             var res=Users.addUser(inputObj.username,inputObj.password,inputObj.type);
             userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:result.isOk(res),errorDetails:res.msg});
             break;
         
-        case Users.giveUserData:
-            userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",success:true,appliances:Users.getUserData(user.username) });
+        case giveUserData:
+            var allAppliances=Users.retrunAllAppliances('state');
+            userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",success:result.isOk(res),appliances:Users.getUserData(user.username),predicament:result.isOk(res)?res.msg:[] });
             break;
-        case Users.addAppliance:
-            var res=Users.addApplianceToUser(user.username,inputObj.details);
+        case addAppliance:
+            var res=Users.addApplianceToUser(user.username,inputObj.details,inputObj.username);
             userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res),itemId:(res.msg)[0],errorDetails:(res.msg)[1]});
             break;
-        case Users.removeAppliance:
+        case removeAppliance:
             var res=Users.removeApplianceToUser(user.username,inputObj.id);
             userSocket.emit('send message to user',user.username,{messageType:"removeApplianceResponse",removed:result.isOk(res),errorDetails:res.msg});
             break;
+        case getAllAppliances:
+            var res=Users.getAllAppliances('type');
+            userSocket.emit('send message to user',user.username,{messageType:"getAllAppliancesReponse",success:result.isOk(res),appliances:result.isOk(res)?res.msg:[],errorDetails:result.isOk(res)?"success":res.msg});
+        break;
             
         default:
             return userSocket.emit('send message to user',user.username,{messageType:parseErorr,content:"no message with this type"}); 
@@ -103,5 +127,7 @@ function handleMsg(inputObj,user,userSocket){
 
 
 addMsgToPrint(" Server is listening on port " + PORT);
+
+
 
 

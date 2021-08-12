@@ -23,7 +23,8 @@ ws.on('open', function() {
     ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"}}");
     ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"}}");
     ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"}}");
-    ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"guy2\",\"msg\":\""+"hi"+"\"}");
+    ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"1234\",\"msg\":\""+  "on"  +"\"}");
+    ws.send("{\"messageType\":\"getAllAppliances\"}");
 });
 ws.addEventListener('send',async function(){
     const x ="hi guy2";
