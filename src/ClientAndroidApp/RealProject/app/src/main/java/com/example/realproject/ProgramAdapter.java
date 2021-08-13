@@ -1,9 +1,13 @@
 package com.example.realproject;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 
@@ -12,11 +16,17 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import android.os.Vibrator;
+import android.widget.Toast;
+
 public class ProgramAdapter extends ArrayAdapter<String> {
     Context context;
     ArrayList<Integer> images;
     ArrayList<String> progName, programDesc, username;
     ArrayList<Boolean> programSwitch;
+    private int loadedIndex = 0;
+    private Activity itemsActivity;
+
 
 
     public ProgramAdapter(Context context, ArrayList<String> progName, ArrayList<Integer> images, ArrayList<String> programDesc, ArrayList<Boolean> isChecked, ArrayList<String> username) {
@@ -50,13 +60,28 @@ public class ProgramAdapter extends ArrayAdapter<String> {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 
-                //todo add username
-                String switchChanged = "{messageType:flipTheSwitch, sendToUsername:" + username.get(position) + "  msg:" + isChecked + "}";
-                try {
-                    JSONObject jsonSwitchChanged = new JSONObject(switchChanged);
 
+
+
+                String bo = Boolean.toString(isChecked);
+                //todo add username
+                String switchChanged;
+                if(LoginPage.testing)
+                    switchChanged= "{messageType:filpTheSwitchResponse,success=true,state:on}";
+                    else
+                    switchChanged= "{messageType:flipTheSwitch, sendToUsername:" + username.get(position) + ",  msg:" + bo + "}";
+                try {
+                    //Items.vItem.vibrate(100);
+
+
+
+                    JSONObject jsonSwitchChanged = new JSONObject(switchChanged);
+                    LoginPage.store="";
                     LoginPage.ws.send(jsonSwitchChanged.toString());
-                    System.out.println(LoginPage.store);
+
+                    Handler handler = new Handler();
+                    checkIfLoaded(handler, position);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -64,4 +89,47 @@ public class ProgramAdapter extends ArrayAdapter<String> {
         });
         return singleItem;
     }
+
+    public void checkIfLoaded(Handler handler, int position) {
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (!LoginPage.store.isEmpty()) {
+                    try {
+                        //maybe also send position and make sure i get it back.
+                        JSONObject jsonObject = new JSONObject(LoginPage.store);
+                        String boo = jsonObject.getString("success");
+                        if (boo.equals("true")) {
+
+
+
+                        } else {
+
+                            programSwitch.set(position, !programSwitch.get(position));
+
+
+                        }
+
+
+
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+
+                } else {
+                    if (loadedIndex < 300) {
+                        loadedIndex++;
+                        checkIfLoaded(handler, position);
+                    } else {
+
+
+                    }
+                    //else
+                    //errorLoading.setText("Could not load, please check internet connection");
+                }
+            }
+        }, 30);
+    }
+
 }

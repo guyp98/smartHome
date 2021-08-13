@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -63,11 +64,12 @@ public class MainMenu extends AppCompatActivity {
             LoginPage.store = "";
             String jsonLoginStr;
             if (LoginPage.testing)
-                jsonLoginStr = "{messageType:itemsDataInitialiseResponse ,appliances: [], success:true }";
+                jsonLoginStr = "{messageType:itemsDataInitialiseResponse ,appliances: [], predicament:[], success:true }";
             else
                 jsonLoginStr = "{messageType:itemsDataInitialise ,username:" + LoginPage.username + "}";
             JSONObject jsonLogin = new JSONObject(jsonLoginStr);
             LoginPage.ws.send(jsonLogin.toString());
+
             loadingPage.startLoadingDialog();
             Handler handler = new Handler();
             //to do find better idea

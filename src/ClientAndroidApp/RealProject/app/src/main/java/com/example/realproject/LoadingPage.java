@@ -13,7 +13,8 @@ public class LoadingPage  {
     private AlertDialog dialog;
 
      public LoadingPage(Activity myActiviy){
-        activity = myActiviy;
+
+         activity = myActiviy;
     }
 
     public void startLoadingDialog(){

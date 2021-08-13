@@ -8,6 +8,7 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -73,16 +74,28 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
 
             username = usernameTil.getEditText().getText().toString();
             String password = passwordTil.getEditText().getText().toString();
-            String jsonLoginStr;
-            if(LoginPage.testing)
-                jsonLoginStr="{messageType:loginResponse, loggedIn:true, username:"+username+", password :"+password+"}";
-            else
-                jsonLoginStr="{messageType:login ,username:"+username+", password :"+password+"}";
+
+            if (username.isEmpty() || password.isEmpty()) {
+                if (username.isEmpty())
+                    usernameTil.setHelperText("Required*");
+                if (password.isEmpty())
+                    passwordTil.setHelperText("Required*");
+            }
+            else {
+
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+                String jsonLoginStr;
+                if (LoginPage.testing)
+                    jsonLoginStr = "{messageType:loginResponse, loggedIn:true, username:" + username + ", password :" + password + "}";
+                else
+                    jsonLoginStr = "{messageType:login ,username:" + username + ", password :" + password + "}";
 
 
-            JSONObject jsonLogin= new JSONObject(jsonLoginStr);
-            ws.send(jsonLogin.toString());
-            //Toast.makeText(LoginPage.this,"username "+ username +" password" + password,Toast.LENGTH_SHORT).show();
+                JSONObject jsonLogin = new JSONObject(jsonLoginStr);
+                ws.send(jsonLogin.toString());
+
+                //Toast.makeText(LoginPage.this,"username "+ username +" password" + password,Toast.LENGTH_SHORT).show();
+            }
         }
         else if (view.getId()== register.getId()){
 
@@ -133,6 +146,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                     if(type.equals( "loginResponse"))
                     {
                         if (jsonObject.getString("loggedIn").equals("true")) {
+
                             Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
                             startActivity(itemsAct);
                         }

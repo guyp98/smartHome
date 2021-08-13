@@ -13,7 +13,7 @@
 
 
     <TextView
-        android:paddingTop="16dp"
+        android:paddingTop="100dp"
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -38,13 +38,13 @@
             android:textAllCaps="false"
             android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonRemove"
+            app:layout_constraintEnd_toStartOf="@+id/buttonCombos"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
         <Button
-            android:id="@+id/buttonRemove"
+            android:id="@+id/buttonCombos"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="65dp"
@@ -60,6 +60,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ListView
+        android:paddingTop="10dp"
         android:id="@+id/listViewItems"
         android:layout_width="match_parent"
         android:layout_height="576dp" >
@@ -67,6 +68,8 @@
 
 
     </ListView>
+
+
 
 
 </LinearLayout>

@@ -2,12 +2,17 @@ package com.example.realproject;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Vibrator;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 
@@ -25,11 +30,11 @@ public class Items extends AppCompatActivity {
     private ArrayList<Integer> progImag, idList;
     private ArrayList<Boolean> isChecked;
     private String areaString, descString;
+    public static Vibrator vItem;
     private ListView itemsListView;
-    private boolean canRemove;
     private Intent editItemsIntent;
     private HashMap<String ,Boolean> usernameSwitch;
-    private int positionSaver,loadedIndex,idInt;
+    private int positionSaver,loadedIndex=0,idInt;
     //SharedPreferences sharedPreferences;
     //haredPreferences.Editor editor;
     private ProgramAdapter programAdapter;
@@ -42,21 +47,25 @@ public class Items extends AppCompatActivity {
     public static final String itemSize = "Size";
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_items);
+            vItem = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
             area = new ArrayList<>();
             desc = new ArrayList<>();
             progImag = new ArrayList<>();
             idList = new ArrayList<>();
             isChecked = new ArrayList<>();
+            username=new ArrayList<>();
             usernameSwitch = new HashMap<>();
 
-            isChecked.add(true);
-            isChecked.add(true);
+            isChecked.add(false);
+            isChecked.add(false);
 
 
 
@@ -105,13 +114,8 @@ public class Items extends AppCompatActivity {
             programAdapter = new ProgramAdapter(this, area, progImag, desc,isChecked,username);
             itemsListView.setAdapter(programAdapter);
 
-            area.add("Dan");
-            desc.add("Light");
-            progImag.add(R.drawable.picture_bulb_2_small);
-            area.add("Guy");
-            desc.add("Light");
-            progImag.add(R.drawable.picture_bulb_2_small);
-            programAdapter.notifyDataSetChanged();
+            addItemToList("Dan","Light",2,"0x0CFF3D");
+            addItemToList("Guy","Light",1,"0xD2FF3D");
 
 
         } catch (Exception e) {
@@ -132,12 +136,14 @@ public class Items extends AppCompatActivity {
 
         if (requestCode == Items.AddScreen) {
             if (resultCode == RESULT_OK) {
+                Log.d("dan","reached onActivityResult");
                 String areaString = data.getStringExtra("area");
                 String typeString = data.getStringExtra("type");
+                String usernameString = data.getStringExtra("username");
+
                 int id = data.getIntExtra("id", -1);
-                //todo not run!!!
-                addItemToList(areaString, typeString, id,"ChangeMe");
-                programAdapter.notifyDataSetChanged();
+                addItemToList(areaString, typeString, id,usernameString);
+
 
 
             }
@@ -153,70 +159,44 @@ public class Items extends AppCompatActivity {
 
             }
         }
-    public void getView(final int position, View convertView, ViewGroup parent) {
 
 
-        if(convertView.getId()==itemsListView.getId()){
-            System.out.println("dan Rules");
-
-
-        }
-    }
-
-
-
-    public void onButtonClickItems(View view) throws JSONException {
-        if (view.getId() == R.id.buttonAdd) {
-            Intent itemsAct = new Intent(Items.this, AddScreen.class);
-            startActivityForResult(itemsAct, Items.AddScreen);
-
-        }
-        else if (view.getId() == R.id.buttonRemove && positionSaver != -1) {
-
-            String jsonRemoveAppliaceStr;
-            if(LoginPage.testing)
-                jsonRemoveAppliaceStr= "{messageType:removeApplianceResponse, removed:true }";
-            else
-                jsonRemoveAppliaceStr= "{messageType:removeAppliance, id:" + idList.get(positionSaver) + "}";
-            JSONObject jsonRemoveAppliance = new JSONObject(jsonRemoveAppliaceStr);
-            LoginPage.ws.send(jsonRemoveAppliance.toString());
-
-            Handler handler = new Handler();
-            checkIfLoaded(handler);
-
-
-            area.remove(positionSaver);
-            progImag.remove(positionSaver);
-            desc.remove(positionSaver);
-            idList.remove(positionSaver);
-            //todo notify Guy
-            positionSaver = -1;
-            programAdapter.notifyDataSetChanged();
-        }
-        //on click invisible
-        else
-        {
-            positionSaver= view.getId();
-
-        }
-
-
-    }
-
-
-    public void checkIfLoaded(Handler handler) {
+    public void checkIfLoaded (Handler handler, Intent addScreenIntent) {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 if (!LoginPage.store.isEmpty()) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(LoginPage.store);
-                        String boo = jsonObject.getString("removed");
-                        if (boo.equals("true")) {
-                            canRemove = true;
-                        } else
-                            canRemove = false;
+                    Bundle b = new Bundle();
 
+                    JSONObject jsonObject = null;
+                    try {
+                        jsonObject = new JSONObject(LoginPage.store);
+                        ArrayList<String> usernameExtra = new ArrayList<>();
+                        ArrayList<String> typeExtra = new ArrayList<>();
+                        String boo = jsonObject.getString("success");
+                        if (boo.equals("true")) {
+
+                            //get the username-boolean hashmap. then when reading the full object add the relevent boolean
+                            JSONArray applianceArray = jsonObject.getJSONArray("appliances");
+                            for (int i = 0; i < applianceArray.length(); i++) {
+                                JSONObject appliaceSingle = applianceArray.getJSONObject(i);
+                                String usernameCheck = appliaceSingle.getString("username");
+                                if(!username.contains(usernameCheck))
+                                {
+                                    Log.v("realproject","added username, "+ usernameCheck);
+                                    Log.e("realproject","added username, "+ usernameCheck);
+                                    usernameExtra.add(usernameCheck);
+                                    typeExtra.add(appliaceSingle.getString("type"));
+                                }
+
+                            }
+
+                        }
+
+                        b.putStringArrayList("username", usernameExtra);
+                        b.putStringArrayList("type",typeExtra);
+                        addScreenIntent.putExtra("usernameBundle", b);
+                        startActivityForResult(addScreenIntent, Items.AddScreen);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -224,15 +204,47 @@ public class Items extends AppCompatActivity {
                 } else {
                     if (loadedIndex < 300) {
                         loadedIndex++;
-                        checkIfLoaded(handler);
+                        checkIfLoaded(handler, addScreenIntent);
                     }
                     //else
-                    //  errorLoading.setText("Could not load, please check internet connection");
+                    //    errorLoading.setText("Could not load, please check internet connection");
                 }
             }
         }, 30);
     }
 
+
+    public void onButtonClickItems(View view) throws JSONException {
+        if (view.getId() == R.id.buttonAdd) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
+            String jsonLoginStr;
+            if (LoginPage.testing)
+                jsonLoginStr = "{messageType:getAllAppliances,success:true,appliances:[{username:D33DFF,type:SmartSensor},{username:FF2DC8,type:SmartSensor}] }";
+            else
+                jsonLoginStr = "{messageType:getAllAppliances}";
+            JSONObject jsonLogin = new JSONObject(jsonLoginStr);
+            LoginPage.store="";
+            LoginPage.ws.send(jsonLogin.toString());
+
+            Intent addScreenIntent = new Intent(Items.this, AddScreen.class);
+            Handler handler = new Handler();
+
+            checkIfLoaded(handler, addScreenIntent);
+
+
+        } else if (view.getId() == R.id.buttonCombos) {
+
+
+        }
+        //on click invisible
+        else {
+            positionSaver = view.getId();
+
+        }
+
+
+    }
 
 
     public void addItemToList(String areaString, String descString, int id,String usernameString) {
@@ -246,6 +258,8 @@ public class Items extends AppCompatActivity {
             progImag.add(R.drawable.picture_boiling_water);*/
         else
             progImag.add(R.drawable.picture_boiling_water);
+
+        programAdapter.notifyDataSetChanged();
 
 
 
