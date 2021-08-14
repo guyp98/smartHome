@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -21,6 +22,8 @@ public class RegisterScreen extends AppCompatActivity {
     private Button register;
     private TextView errorPassword;
     private TextInputLayout username, password, password2;
+    private boolean started = false;
+    private Runnable checkIfResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,34 +38,17 @@ public class RegisterScreen extends AppCompatActivity {
 
     }
 
-    public void checkIfLoaded(Handler handler) {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!LoginPage.store.isEmpty()) {
-                    finish();
-                } else {
-                    checkIfLoaded(handler);
-                }
-                //else
-                //  errorLoading.setText("Could not load, please check internet connection");
-            }
-        }, 30);
-    }
-
 
     public void onClickLogin(View view) throws JSONException {
 
         if (view.getId() == register.getId()) ;
         {
-
-
             String usernameString = username.getEditText().getText().toString();
             String passwordString = password.getEditText().getText().toString();
             String passwordString2 = password2.getEditText().getText().toString();
             if (passwordString.equals(passwordString2)) {
                 String jsonLoginStr;
-                if(LoginPage.testing)
+                if (LoginPage.testing)
                     jsonLoginStr = "{messageType:registerResponse, registered:true, username:" + usernameString + ", password :" + passwordString + "}";
                 else
                     jsonLoginStr = "{messageType:register, username:" + usernameString + ", password :" + passwordString + ",type: user }";
@@ -71,18 +57,35 @@ public class RegisterScreen extends AppCompatActivity {
                 LoginPage.store = "";
                 LoginPage.ws.send(jsonLogin.toString());
 
-                Handler handler = new Handler();
                 //to do find better idea
 
 
-                checkIfLoaded(handler);
+                checkIfResponse = new Runnable() {
+                    @Override
+                    public void run() {
+                            Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
+                            for (int i = 0; i < 2000 & !started; i++) {
+                                try {
+                                    Thread.sleep(5);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                                if (!LoginPage.store.isEmpty()) {
+                                    started = true;
+                                    finish();
+                                }
+                            }
+                            //if (!started)
+                            //  errorLoading.setText("Could not load, please check internet connection");
+                        }
+                };
+                Thread itemsActThread = new Thread(checkIfResponse);
+                itemsActThread.start();
             } else {
 
                 errorPassword.setText("passwords do not match");
             }
         }
-
-
     }
 
 

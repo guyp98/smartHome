@@ -26,12 +26,13 @@ public class AddScreen extends AppCompatActivity {
     private Spinner dropDowntype,dropDownUsername;
     private ArrayList<String> usernameArray,typeArray;
     private int loadedIndex = 0;
+    private Boolean started = false;
+    private Runnable checkIfResponse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // make window clickable
-        getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
         setContentView(R.layout.activity_add_screen);
         til = findViewById(R.id.textInputArea);
@@ -61,20 +62,26 @@ public class AddScreen extends AppCompatActivity {
 
     public void sendAddAppliance(String area, String desc,String usernameString) {
         try {
-
-            String jsonLoginStr = "{area:" + area + ", desc:" + desc + "}";
+            String desc2;
+            if(desc.equals("Water Heater"))
+                desc2="Water Heater";
+            else
+                desc2=desc;
+            String jsonLoginStr = "{area:" + area + ", desc: " + desc2 + "}";
             JSONObject jsonLogin = new JSONObject(jsonLoginStr);
             String jsonAddAppliaceStr;
             int iddan = LoginPage.runningId;
             if(LoginPage.testing)
-                jsonAddAppliaceStr = "{messageType:addApplianceResponse, added:true, itemId:"+iddan+" }";
+                jsonAddAppliaceStr = "{messageType:addApplianceResponse, added:true, state:false, itemId:"+iddan+" }";
             else
                     jsonAddAppliaceStr = "{messageType:addAppliance,username:"+usernameString+", details:" + jsonLogin.toString() + "}";
 
             JSONObject jsonAddAppliance = new JSONObject(jsonAddAppliaceStr);
             LoginPage.ws.send(jsonAddAppliance.toString());
         } catch (JSONException e) {
-            System.out.println(e.toString());
+            Log.e("Json error",desc);
+            Log.e("Json error",e.toString());
+
         }
 
 
@@ -85,7 +92,6 @@ public class AddScreen extends AppCompatActivity {
             String typeString = dropDowntype.getSelectedItem().toString();
             String usernameString  = dropDownUsername.getSelectedItem().toString();
             String areaString = til.getEditText().getText().toString();
-            Toast.makeText(AddScreen.this, "you selected " + areaString, Toast.LENGTH_SHORT).show();
             Intent resultIntent = new Intent();
             resultIntent.putExtra("type", typeString);
             resultIntent.putExtra("area", areaString);
@@ -96,7 +102,59 @@ public class AddScreen extends AppCompatActivity {
 
 
             Handler handler = new Handler();
-            checkIfLoaded(handler, resultIntent);
+
+            checkIfResponse = new Runnable() {
+                @Override
+                public void run() {
+
+                        Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
+                        for (int i = 0; i < 2000 & !started; i++) {
+
+                            try {
+                                Thread.sleep(5);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (!LoginPage.store.isEmpty()) {
+                                started = true;
+                                try {
+                                    JSONObject jsonObject = new JSONObject(LoginPage.store);
+                                    String boo = jsonObject.getString("added");
+                                    if (boo.equals("true")) {
+                                        Log.d("dan","reached checkIfLoaded boo==true");
+                                        setResult(Activity.RESULT_OK, resultIntent);
+                                        boolean state = jsonObject.getBoolean("state");
+                                        int id = jsonObject.getInt("itemId");
+                                        resultIntent.putExtra("state",state);
+                                        resultIntent.putExtra("id", id);
+                                        finish();
+
+                                    } else
+                                        setResult(Activity.RESULT_CANCELED, resultIntent);
+
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+
+
+
+
+                        }
+                        setResult(Activity.RESULT_CANCELED, resultIntent);
+                        finish();
+
+
+                    }
+
+
+
+            };
+            Thread itemsActThread = new Thread(checkIfResponse);
+            itemsActThread.start();
 
 
 
@@ -110,44 +168,4 @@ public class AddScreen extends AppCompatActivity {
     }
 
 
-    public void checkIfLoaded(Handler handler, Intent resultIntent) {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!LoginPage.store.isEmpty()) {
-                    try {
-                        JSONObject jsonObject = new JSONObject(LoginPage.store);
-                        String boo = jsonObject.getString("added");
-                        if (boo.equals("true")) {
-                            Log.d("dan","reached checkIfLoaded boo==true");
-                            setResult(Activity.RESULT_OK, resultIntent);
-                            int id = jsonObject.getInt("itemId");
-                            resultIntent.putExtra("id", id);
-                            finish();
-
-                        } else
-                            setResult(Activity.RESULT_CANCELED, resultIntent);
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-
-                } else {
-                    if (loadedIndex < 300) {
-                        loadedIndex++;
-                        checkIfLoaded(handler, resultIntent);
-                    }
-                    else
-                    {
-                        setResult(Activity.RESULT_CANCELED, resultIntent);
-                        finish();
-
-                    }
-                    //else
-                    //errorLoading.setText("Could not load, please check internet connection");
-                }
-            }
-        }, 30); }
 }

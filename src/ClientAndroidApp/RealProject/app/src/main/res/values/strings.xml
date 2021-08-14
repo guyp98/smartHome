@@ -8,7 +8,7 @@
     <string name="type">Type</string>
     <string-array name="TypeOfAppliances">
         <item>Light</item>
-        <item>"Water Heater"</item>
+        <item>Water-Heater</item>
         <item>Other</item>
 
     </string-array>

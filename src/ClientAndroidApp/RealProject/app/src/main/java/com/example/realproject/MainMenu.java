@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -20,7 +21,8 @@ public class MainMenu extends AppCompatActivity {
     public static int loadedIndex=0;
     Button itemsButton,buttonCombos;
     TextView errorLoading;
-
+    Runnable checkIfResponse;
+    private Boolean started=false;
     LoadingPage loadingPage;
     boolean loaded =false;
     @Override
@@ -35,29 +37,7 @@ public class MainMenu extends AppCompatActivity {
 
     }
 
-    public void checkIfLoaded (Handler handler, Intent itemsAct){
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!LoginPage.store.isEmpty()) {
-                    loadingPage.dismissDialog();
-                    startActivity(itemsAct);
 
-                }
-
-                else{
-                    if(loadedIndex <300) {
-                        loadedIndex++;
-                        checkIfLoaded(handler, itemsAct);
-                    }
-                    else
-                        errorLoading.setText("Could not load, please check internet connection");
-                }
-            }
-        }, 30);
-
-
-    }
     public void onButtonClick(View view) throws JSONException {
         if (view.getId() == itemsButton.getId()) {
             Intent itemsAct = new Intent(MainMenu.this, Items.class);
@@ -71,11 +51,40 @@ public class MainMenu extends AppCompatActivity {
             LoginPage.ws.send(jsonLogin.toString());
 
             loadingPage.startLoadingDialog();
-            Handler handler = new Handler();
             //to do find better idea
+            Log.d("mainThread","my id is "+Thread.currentThread().getName());
 
-            checkIfLoaded(handler, itemsAct);
-        } else if (view.getId() == buttonCombos.getId()) {
+
+
+            checkIfResponse = new Runnable() {
+                @Override
+                public void run() {
+
+                        Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
+                        for (int i = 0; i < 2000 & !started; i++) {
+
+                            try {
+                                Thread.sleep(5);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (!LoginPage.store.isEmpty()) {
+                                started = true;
+                                loadingPage.dismissDialog();
+                                startActivity(itemsAct);
+
+                            }
+                        }
+                        if (!started)
+                            errorLoading.setText("Could not load, please check internet connection");
+                    }
+            };
+            Thread itemsActThread = new Thread(checkIfResponse);
+            itemsActThread.start();
+
+        }
+        if (view.getId() == buttonCombos.getId()) {
+            started=false;
 
             LoginPage.ws.send("combos");
             Intent itemsAct = new Intent(MainMenu.this, LoginPage.class);

@@ -9,12 +9,9 @@ import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.Switch;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,6 +32,8 @@ public class Items extends AppCompatActivity {
     private Intent editItemsIntent;
     private HashMap<String ,Boolean> usernameSwitch;
     private int positionSaver,loadedIndex=0,idInt;
+    private Boolean started=false;
+    private Runnable checkIfResponse;
     //SharedPreferences sharedPreferences;
     //haredPreferences.Editor editor;
     private ProgramAdapter programAdapter;
@@ -64,8 +63,7 @@ public class Items extends AppCompatActivity {
             username=new ArrayList<>();
             usernameSwitch = new HashMap<>();
 
-            isChecked.add(false);
-            isChecked.add(false);
+
 
 
 
@@ -92,10 +90,7 @@ public class Items extends AppCompatActivity {
                     JSONObject jsonSingleAppliance = new JSONObject(details);
                     areaString = jsonSingleAppliance.getString("area");
                     descString = jsonSingleAppliance.getString("desc");
-
-
-                    isChecked.add(usernameSwitch.get(usernameString));
-                    addItemToList(areaString, descString,idInt,usernameString);
+                    addItemToList(areaString, descString,idInt,usernameString,usernameSwitch.get(usernameString));
                 }
             }
             editItemsIntent = new Intent(this, ItemInfo.class);
@@ -114,8 +109,8 @@ public class Items extends AppCompatActivity {
             programAdapter = new ProgramAdapter(this, area, progImag, desc,isChecked,username);
             itemsListView.setAdapter(programAdapter);
 
-            addItemToList("Dan","Light",2,"0x0CFF3D");
-            addItemToList("Guy","Light",1,"0xD2FF3D");
+            addItemToList("Dan","Light",2,"0x0CFF3D",false);
+            addItemToList("Guy","Water-Heater",1,"0xD2FF3D",false);
 
 
         } catch (Exception e) {
@@ -136,13 +131,17 @@ public class Items extends AppCompatActivity {
 
         if (requestCode == Items.AddScreen) {
             if (resultCode == RESULT_OK) {
+                started=false;
                 Log.d("dan","reached onActivityResult");
+                Boolean stateSwitch = data.getBooleanExtra("state",false);
                 String areaString = data.getStringExtra("area");
                 String typeString = data.getStringExtra("type");
                 String usernameString = data.getStringExtra("username");
 
                 int id = data.getIntExtra("id", -1);
-                addItemToList(areaString, typeString, id,usernameString);
+                addItemToList(areaString, typeString, id,usernameString,stateSwitch);
+                getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
+
 
 
 
@@ -150,6 +149,7 @@ public class Items extends AppCompatActivity {
         }
         if (requestCode == Items.ItemInfo) {
             if (resultCode == RESULT_OK) {
+                started=false;
                 String areaString = data.getStringExtra("area");
                 changeName(positionSaver, areaString);
                 programAdapter.notifyDataSetChanged();
@@ -161,57 +161,6 @@ public class Items extends AppCompatActivity {
         }
 
 
-    public void checkIfLoaded (Handler handler, Intent addScreenIntent) {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (!LoginPage.store.isEmpty()) {
-                    Bundle b = new Bundle();
-
-                    JSONObject jsonObject = null;
-                    try {
-                        jsonObject = new JSONObject(LoginPage.store);
-                        ArrayList<String> usernameExtra = new ArrayList<>();
-                        ArrayList<String> typeExtra = new ArrayList<>();
-                        String boo = jsonObject.getString("success");
-                        if (boo.equals("true")) {
-
-                            //get the username-boolean hashmap. then when reading the full object add the relevent boolean
-                            JSONArray applianceArray = jsonObject.getJSONArray("appliances");
-                            for (int i = 0; i < applianceArray.length(); i++) {
-                                JSONObject appliaceSingle = applianceArray.getJSONObject(i);
-                                String usernameCheck = appliaceSingle.getString("username");
-                                if(!username.contains(usernameCheck))
-                                {
-                                    Log.v("realproject","added username, "+ usernameCheck);
-                                    Log.e("realproject","added username, "+ usernameCheck);
-                                    usernameExtra.add(usernameCheck);
-                                    typeExtra.add(appliaceSingle.getString("type"));
-                                }
-
-                            }
-
-                        }
-
-                        b.putStringArrayList("username", usernameExtra);
-                        b.putStringArrayList("type",typeExtra);
-                        addScreenIntent.putExtra("usernameBundle", b);
-                        startActivityForResult(addScreenIntent, Items.AddScreen);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                } else {
-                    if (loadedIndex < 300) {
-                        loadedIndex++;
-                        checkIfLoaded(handler, addScreenIntent);
-                    }
-                    //else
-                    //    errorLoading.setText("Could not load, please check internet connection");
-                }
-            }
-        }, 30);
-    }
 
 
     public void onButtonClickItems(View view) throws JSONException {
@@ -228,9 +177,65 @@ public class Items extends AppCompatActivity {
             LoginPage.ws.send(jsonLogin.toString());
 
             Intent addScreenIntent = new Intent(Items.this, AddScreen.class);
-            Handler handler = new Handler();
 
-            checkIfLoaded(handler, addScreenIntent);
+            checkIfResponse = new Runnable() {
+                @Override
+                public void run() {
+                        for (int i = 0; i < 2000 & !started; i++) {
+                            try {
+                                Thread.sleep(5);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
+                            if (!LoginPage.store.isEmpty()) {
+                                started=true;
+                                Bundle b = new Bundle();
+
+                                JSONObject jsonObject = null;
+                                try {
+                                    jsonObject = new JSONObject(LoginPage.store);
+                                    ArrayList<String> usernameExtra = new ArrayList<>();
+                                    ArrayList<String> typeExtra = new ArrayList<>();
+                                    String boo = jsonObject.getString("success");
+                                    if (boo.equals("true")) {
+
+                                        //get the username-boolean hashmap. then when reading the full object add the relevent boolean
+                                        JSONArray applianceArray = jsonObject.getJSONArray("appliances");
+                                        for (int j = 0; j < applianceArray.length(); j++) {
+                                            JSONObject appliaceSingle = applianceArray.getJSONObject(j);
+                                            String usernameCheck = appliaceSingle.getString("username");
+                                            if(!username.contains(usernameCheck))
+                                            {
+                                                usernameExtra.add(usernameCheck);
+                                                typeExtra.add(appliaceSingle.getString("type"));
+                                            }
+
+                                        }
+
+                                    }
+
+                                    b.putStringArrayList("username", usernameExtra);
+                                    b.putStringArrayList("type",typeExtra);
+                                    addScreenIntent.putExtra("usernameBundle", b);
+                                    startActivityForResult(addScreenIntent, Items.AddScreen);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }
+                        }
+
+
+                    }
+
+
+
+            };
+            Thread itemsActThread = new Thread(checkIfResponse);
+            itemsActThread.start();
+            Log.d("check","reached after thread start");
+
 
 
         } else if (view.getId() == R.id.buttonCombos) {
@@ -247,17 +252,18 @@ public class Items extends AppCompatActivity {
     }
 
 
-    public void addItemToList(String areaString, String descString, int id,String usernameString) {
+    public void addItemToList(String areaString, String descString, int id,String usernameString,Boolean stateSwitch) {
         area.add(areaString);
         desc.add(descString);
         username.add(usernameString);
+        isChecked.add(stateSwitch);
         idList.add(id);
         if (descString.equals("Light"))
             progImag.add(R.drawable.picture_bulb_2_small);
         /*else if (descString.equals("Water Heater"))
             progImag.add(R.drawable.picture_boiling_water);*/
         else
-            progImag.add(R.drawable.picture_boiling_water);
+            progImag.add(R.drawable.picture_boiler2);
 
         programAdapter.notifyDataSetChanged();
 
