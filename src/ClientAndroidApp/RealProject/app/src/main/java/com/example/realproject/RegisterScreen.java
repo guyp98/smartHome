@@ -64,9 +64,9 @@ public class RegisterScreen extends AppCompatActivity {
                     @Override
                     public void run() {
                             Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
-                            for (int i = 0; i < 2000 & !started; i++) {
+                            for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
                                 try {
-                                    Thread.sleep(5);
+                                    Thread.sleep(LoginPage.threadSleep);
                                 } catch (InterruptedException e) {
                                     e.printStackTrace();
                                 }

@@ -10,12 +10,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-public class EditItem extends AppCompatActivity {
+public class EditItem extends AppCompatActivity implements DeleteContactDialog.DeleteDialogListener {
     private EditText nameEdit;
     private ImageView image;
     private String name;
     private int imageInt;
-    private Button back2Info;
+    private Button back2Info,deleteContact;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,22 +24,25 @@ public class EditItem extends AppCompatActivity {
         name = intent.getStringExtra("area");
         nameEdit = findViewById(R.id.edittext_edit_item_name);
         image=findViewById(R.id.imageView_edititem);
+        deleteContact=findViewById(R.id.button_delete_contact);
         nameEdit.setText(name);
         back2Info = findViewById(R.id.button_items_back2);
         imageInt = intent.getIntExtra("picture", -1);
         image.setImageResource(imageInt);
+
     }
 
 
     public void onClickEdit(View view){
             if(view.getId()==back2Info.getId()){
-
                 Intent resultIntent = new Intent();
                 //resultIntent.putExtra("type", typeString);
                 resultIntent.putExtra("area", nameEdit.getText().toString());
                 setResult(Activity.RESULT_OK, resultIntent);
                 finish();
-
+            }
+            if(view.getId() == deleteContact.getId()){
+                openDeleteDialog();
 
             }
 
@@ -48,5 +51,17 @@ public class EditItem extends AppCompatActivity {
 
 
 
+    }
+    public void openDeleteDialog(){
+        DeleteContactDialog dialog = new DeleteContactDialog();
+        dialog.show(getSupportFragmentManager(),"dans dialog");
+
+
+    }
+
+    @Override
+    public void onYesClicked() {
+        setResult(LoginPage.ResultRemoved);
+        finish();
     }
 }

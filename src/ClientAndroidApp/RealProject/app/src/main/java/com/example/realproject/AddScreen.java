@@ -25,7 +25,7 @@ public class AddScreen extends AppCompatActivity {
 
     private Spinner dropDowntype,dropDownUsername;
     private ArrayList<String> usernameArray,typeArray;
-    private int loadedIndex = 0;
+    private int loadedIndex = 0,idTesting=3;
     private Boolean started = false;
     private Runnable checkIfResponse;
 
@@ -70,11 +70,12 @@ public class AddScreen extends AppCompatActivity {
             String jsonLoginStr = "{area:" + area + ", desc: " + desc2 + "}";
             JSONObject jsonLogin = new JSONObject(jsonLoginStr);
             String jsonAddAppliaceStr;
-            int iddan = LoginPage.runningId;
+            idTesting++;
             if(LoginPage.testing)
-                jsonAddAppliaceStr = "{messageType:addApplianceResponse, added:true, state:false, itemId:"+iddan+" }";
+                jsonAddAppliaceStr = "{messageType:addApplianceResponse, added:true, state:false, itemId:"+idTesting+" }";
             else
                     jsonAddAppliaceStr = "{messageType:addAppliance,username:"+usernameString+", details:" + jsonLogin.toString() + "}";
+
 
             JSONObject jsonAddAppliance = new JSONObject(jsonAddAppliaceStr);
             LoginPage.ws.send(jsonAddAppliance.toString());
@@ -108,10 +109,10 @@ public class AddScreen extends AppCompatActivity {
                 public void run() {
 
                         Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
-                        for (int i = 0; i < 2000 & !started; i++) {
+                        for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
 
                             try {
-                                Thread.sleep(5);
+                                Thread.sleep(LoginPage.threadSleep);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }

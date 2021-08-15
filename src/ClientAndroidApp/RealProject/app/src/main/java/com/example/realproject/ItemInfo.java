@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 public class ItemInfo extends AppCompatActivity {
 
-    private TextView name;
+    private TextView name, notes;
     private ImageView image;
     private int imageInt;
     private Button back, edit;
@@ -26,11 +26,19 @@ public class ItemInfo extends AppCompatActivity {
         edit = findViewById(R.id.button_edit_item);
         name = findViewById(R.id.textView_appliance_name);
         image = findViewById(R.id.imageView_edititem);
+        notes = findViewById(R.id.textView_notes);
         Intent intent = getIntent();
         String nameString = intent.getStringExtra("areaInput");
+        String usernameAppliance = intent.getStringExtra("username");
         imageInt = intent.getIntExtra("picture", -1);
+
+
         name.setText(nameString);
         image.setImageResource(imageInt);
+
+       // notes.setText("   Notes \n   username: "+usernameAppliance);
+
+
 
     }
 
@@ -54,11 +62,7 @@ public class ItemInfo extends AppCompatActivity {
             editItemsIntent.putExtra("area", name.getText().toString());
             editItemsIntent.putExtra("picture",imageInt);
             startActivityForResult(editItemsIntent, Items.EditItem);
-
-
         }
-
-
     }
 
 
@@ -70,6 +74,10 @@ public class ItemInfo extends AppCompatActivity {
             if (resultCode == RESULT_OK) {
                 String areaString = data.getStringExtra("area");
                 name.setText(areaString);
+            }
+            else if(resultCode==LoginPage.ResultRemoved){
+                setResult(LoginPage.ResultRemoved);
+                finish();
             }
         }
     }

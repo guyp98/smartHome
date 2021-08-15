@@ -66,7 +66,7 @@ public class ProgramAdapter extends ArrayAdapter<String> {
 
 
                 Log.d("onCheckedChanged", "out of Synchronized");
-                synchronized (LoginPage.switchLock) {
+               // synchronized (LoginPage.switchLock) {
                     Log.d("onCheckedChanged", "in Synchronized");
                     String bo = Boolean.toString(isChecked);
                     //todo add username
@@ -87,10 +87,10 @@ public class ProgramAdapter extends ArrayAdapter<String> {
                             @Override
                             public void run() {
 
-                                    for (int i = 0; i < 2000 & !started; i++) {
+                                    for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
 
                                         try {
-                                            Thread.sleep(5);
+                                            Thread.sleep(LoginPage.threadSleep);
                                         } catch (InterruptedException e) {
                                             e.printStackTrace();
                                         }
@@ -127,7 +127,7 @@ public class ProgramAdapter extends ArrayAdapter<String> {
                         e.printStackTrace();
                     }
                 }
-            }
+            //}
         });
         return singleItem;
     }

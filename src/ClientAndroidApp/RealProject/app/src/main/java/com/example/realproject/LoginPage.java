@@ -28,9 +28,8 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     private Button login,register;
     private TextView outputFromServer;
     private OkHttpClient client;
-    public static final Object switchLock = new Object();
     public static String store,username;
-    public static Integer runningId=0;
+    public static final Integer ResultRemoved=2,threadSleep=3,threadCycle=3000;
     public static WebSocket ws;
     public static boolean testing=true;
 

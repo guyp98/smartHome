@@ -48,13 +48,14 @@
         app:layout_constraintTop_toBottomOf="@+id/imageView_edititem" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/button_delete_contact"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="15dp"
         android:text="Delete Contact"
         android:textAllCaps="false"
         android:textColor="@color/red"
+        android:onClick="onClickEdit"
         android:textSize="18dp"
         android:textStyle="bold"
         app:backgroundTint="@color/lightGrey"
