@@ -4,7 +4,7 @@
 
 const char* ssid = "BEZEQINT-A09A-2.4G"; //Enter SSID
 const char* password = "SSgdaA0584442626"; //Enter Password
-const char* websockets_server = "ws://192.168.14.160:5001"; //server adress and port
+const char* websockets_server = "ws://192.168.14.101:5001"; //server adress and port
 const char* Username="1234";
 const char* Password="1234";
 const char* Type="smartSwitch";
