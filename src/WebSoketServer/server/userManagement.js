@@ -147,7 +147,7 @@ const retrunAllAppliances=(ret)=>{
             (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({username:tempapp.value.username,type:tempapp.value.role.type});
         }
         else if(ret==='state'){
-            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({username:tempapp.value.username,type:tempapp.value.role.power});
+            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({username:tempapp.value.username,state:tempapp.value.role.power});
         }
         tempapp=iterator.next();
     }
@@ -180,6 +180,7 @@ const getPowerState=(username)=>{
         return result.makeFailure("user or adimin not have power state"); 
     }
     else{
+        console.log(user.role.power);
         return result.makeOk(user.role.power);
     }
 }

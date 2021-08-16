@@ -5,7 +5,7 @@ const { addMsgToPrint } = require('./serverLogs');
 const Users=require('./userManagement');
 const result = require("./result");
 const { tryToConnect,echo,statusToServer,flipTheSwitch, usersComunnication,register,giveUserData
-    ,addAppliance,removeAppliance,getAllAppliances,getPowerState } = require('./commandAndRoles');
+    ,addAppliance,removeAppliance,getAllAppliances } = require('./commandAndRoles');
 
 const PORT = 5001;
 const wsServer = new WebSocket.Server({port: PORT});
@@ -110,7 +110,7 @@ function handleMsg(inputObj,user,userSocket){
 
         case addAppliance:
             var res=Users.addApplianceToUser(user.username,inputObj.details,inputObj.username);
-            userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res),itemId:(res.msg)[0],state:getPowerState(user.username),errorDetails:(res.msg)[1]});
+            userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res)&&result.isOk(Users.getPowerState(user.username)),itemId:(res.msg)[0],state:Users.getPowerState(user.username).msg,errorDetails:(res.msg)[1]});
             break;
 
         case removeAppliance:
