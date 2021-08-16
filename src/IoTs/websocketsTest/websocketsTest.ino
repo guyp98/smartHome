@@ -7,17 +7,20 @@ const char* password = "SSgdaA0584442626"; //Enter Password
 const char* websockets_server = "ws://192.168.14.160:5001"; //server adress and port
 const char* Username="1234";
 const char* Password="1234";
-const char* Type="user";
+const char* Type="smartSwitch";
 
-
+boolean loggedin=false;
+String lastSender="guy";
 using namespace websockets;
+WebsocketsClient client;
 
 void onMessageCallback(WebsocketsMessage message) {
     Serial.print("Got Message: ");
     Serial.println(message.data());
     inputCommand(message.data());
+    
 }
-WebsocketsClient client;
+
 void onEventsCallback(WebsocketsEvent event, String data) {
     if(event == WebsocketsEvent::ConnectionOpened) {
         Serial.println("Connnection Opened");
@@ -33,6 +36,7 @@ void onEventsCallback(WebsocketsEvent event, String data) {
 
 void setup() {
     Serial.begin(115200);
+    pinMode(LED_BUILTIN, OUTPUT);
     WiFi.begin(ssid, password);
     while(WiFi.status() != WL_CONNECTED){
         Serial.print(".");
@@ -46,9 +50,11 @@ void setup() {
     client.poll();
     client.send(loginToServer(Username,Password));
     client.poll();
+    digitalWrite(LED_BUILTIN, LOW);
+    client.send(statusToServer("on"));
 }
 
-boolean t=true;
+
 void loop() {
     client.poll();
     
@@ -59,18 +65,7 @@ void loop() {
     
   
 }
-String inputSerialMonitor(){
-  int incomingByte;
-    String toString="";
-    while (Serial.available() > 0) {
-      incomingByte = Serial.read();
-      Serial.print("I received: ");
-      Serial.println(incomingByte,DEC);
-      String tempNewStr=String(((char)incomingByte));
-      toString.concat(tempNewStr);
-    }
-    return toString;
-  }
+
 String registerToServer(String username,String password,String type){
     DynamicJsonDocument doc(1024);
     doc["messageType"]="register";
@@ -90,30 +85,48 @@ String loginToServer(String username,String password){
   serializeJson(doc, stringify);
   return stringify;
 }
-String statusToServer(String status){
+String statusToServer(String statusT){
   DynamicJsonDocument doc(1024);
   doc["messageType"]="statusResponse";
-  doc["status"] = status;
+  doc["status"] = statusT;
+  doc["sendTo"]=lastSender;
   String stringify="";
   serializeJson(doc, stringify);
   return stringify;
-}/*
-void inputCommand(String json){
+}
+String inputCommand(String json){
   DynamicJsonDocument doc(1024);
   deserializeJson(doc, json);
-  String commandType= doc["messageType"];
-  String command=doc["command"];
-  if(commandType=="flipSwitch"){
-    command=="on"&&Serial.print("flip switch on");
-    command=="off"&&Serial.print("flip switch off");
+  if(doc["messageType"]=="usersCommunication"){
+    String command= doc["message"];
+    //lastSender= doc["from"];
+    if(command=="on"){Serial.print("flip switch on");digitalWrite(LED_BUILTIN, LOW);}
+    else if("off"){Serial.print("flip switch off");digitalWrite(LED_BUILTIN, HIGH);}
+    if(command!=""){
+      client.send(statusToServer(command));
+      return "fail";
     }
-  }*/
-void inputCommand(String json){
-  DynamicJsonDocument doc(1024);
-  deserializeJson(doc, json);
-  String command= doc["message"];
-  
-    if(command=="on"){Serial.print("flip switch on");}
-    
+    return "ok"; 
+  }
+  else if(doc["messageType"]=="loginResponse"){
+    boolean logged= doc["loggedIn"];
+    if(logged){
+      loggedin=true;
+      return "ok";}
+    }
+  return "fail"; 
     
   }
+  /*
+String inputSerialMonitor(){
+  int incomingByte;
+    String toString="";
+    while (Serial.available() > 0) {
+      incomingByte = Serial.read();
+      Serial.print("I received: ");
+      Serial.println(incomingByte,DEC);
+      String tempNewStr=String(((char)incomingByte));
+      toString.concat(tempNewStr);
+    }
+    return toString;
+  }*/

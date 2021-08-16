@@ -144,10 +144,10 @@ const retrunAllAppliances=(ret)=>{
     var tempapp=iterator.next();
     while(!tempapp.done){
         if(ret==='type'){
-            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({useranme:tempapp.value.username,type:tempapp.value.role.type});
+            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({username:tempapp.value.username,type:tempapp.value.role.type});
         }
         else if(ret==='state'){
-            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({useranme:tempapp.value.username,type:tempapp.value.role.power});
+            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({username:tempapp.value.username,type:tempapp.value.role.power});
         }
         tempapp=iterator.next();
     }
@@ -158,12 +158,36 @@ const retrunAllAppliances=(ret)=>{
     } 
 }
 
-
+const setPowerState=(username,powerState)=>{
+    var user=usersMap.get(username);
+    if(user==undefined){
+        return result.makeFailure("no user with this username");
+    }
+    else if(user.role.type=="user"&&user.role.type=="admin"){
+        return result.makeFailure("user or adimin not have power state"); 
+    }
+    else{
+        user.role.power=powerState;
+        return result.makeOk(user.role.power);
+    }
+}
+const getPowerState=(username)=>{
+    var user=usersMap.get(username);
+    if(user==undefined){
+        return result.makeFailure("no user with this username");
+    }
+    else if(user.role.type=="user"&&user.role.type=="admin"){
+        return result.makeFailure("user or adimin not have power state"); 
+    }
+    else{
+        return result.makeOk(user.role.power);
+    }
+}
 
 
 module.exports={isRole,getUserData,canAccess,
     parseUserAndPassword,addUser,authenticate,tryConnectUser,removeApplianceToUser,disconnect,
-    isConnected,addApplianceToUser,isFunExist,retrunAllAppliances: retrunAllAppliances
+    isConnected,addApplianceToUser,setPowerState,isFunExist,retrunAllAppliances, getPowerState
 };
 
 addUser("guy","porat","user");
