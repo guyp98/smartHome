@@ -17,13 +17,13 @@ wsServer.on('connection', async function echoHandler(socket){
 
     let user={username:""};
     addMsgToPrint("A client just connected, "+wsServer.clients.size+" clients connected");
-    
+
 
     socket.on('message',async function (msg) {
         addMsgToPrint(msg);
         interpetMsg(msg,user,socket);
     });
-    
+
     socket.on('close', function () {
         if(user.username!=""){
             socketsMap.delete(user.username);
@@ -31,7 +31,7 @@ wsServer.on('connection', async function echoHandler(socket){
         }
         addMsgToPrint('Client disconnected, '+wsServer.clients.size+" clients connected");
     });
-    
+
 
     socket.on('send message to user',async function (username,JsonMsg) {
         if(username==user.username){
@@ -42,11 +42,11 @@ wsServer.on('connection', async function echoHandler(socket){
 
     socket.on('pong', function(){socket.isAlive=true});
 });
-// checks if connections alive 
+// checks if connections alive
 const interval = setInterval(function ping() {
     wsServer.clients.forEach(function each(socket) {
       if (socket.isAlive === false) return socket.terminate();
-  
+
       socket.isAlive = false;
       socket.ping(()=>{});
     });
@@ -75,14 +75,14 @@ function interpetMsg(msg,user,socket){//take msg string and user- and return ast
     }
     catch(msg){
         addMsgToPrint("cant parse user:("+user.username+")massage. stack trace "+msg);//todo create print manager to the server
-        socket.emit('send message to user',user.username,{messageType:parseErorr,content:"message interpetion error"}); 
+        socket.emit('send message to user',user.username,{messageType:parseErorr,content:"message interpetion error"});
     }
 }
 
 
 function handleMsg(inputObj,user,userSocket){
     switch(inputObj.messageType){
-        
+
         case tryToConnect:
             var connected=Users.tryConnectUser(inputObj.username,inputObj.password);
             if(result.isOk(connected)){
@@ -99,10 +99,10 @@ function handleMsg(inputObj,user,userSocket){
 
         case register:
             var res=Users.addUser(inputObj.username,inputObj.password,inputObj.type);
-            
+
             userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:result.isOk(res),errorDetails:res.msg});
             break;
-        
+
         case giveUserData:
             var res=Users.retrunAllAppliances('state');
             userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",success:result.isOk(res),appliances:Users.getUserData(user.username),predicament:result.isOk(res)?res.msg:[] });
@@ -110,7 +110,7 @@ function handleMsg(inputObj,user,userSocket){
 
         case addAppliance:
             var res=Users.addApplianceToUser(user.username,inputObj.details,inputObj.username);
-            userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res),itemId:(res.msg)[0],state:Users.getPowerState(user.username).msg,errorDetails:(res.msg)[1]});
+            userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res)&&result.isOk(Users.getPowerState(user.username)),itemId:(res.msg)[0],state:Users.getPowerState(user.username).msg,errorDetails:(res.msg)[1]});
             break;
 
         case removeAppliance:
@@ -122,7 +122,7 @@ function handleMsg(inputObj,user,userSocket){
             var res=Users.retrunAllAppliances('type');
             userSocket.emit('send message to user',user.username,{messageType:"getAllAppliancesReponse",success:result.isOk(res),appliances:result.isOk(res)?res.msg:[],errorDetails:result.isOk(res)?"success":res.msg});
             break;
-            
+
         case flipTheSwitch:
             var res=Users.retrunAllAppliances('type');
             var theSwitch=result.isOk(res)?res.msg.find((tuple)=>{
@@ -151,10 +151,10 @@ function handleMsg(inputObj,user,userSocket){
         case usersComunnication:
             sendToSocket=socketsMap.get(inputObj.sendTo);
             sendToSocket.emit('send message to user',inputObj.sendTo,{messageType:"usersCommunication",from:user.username,message:inputObj.msg });
-            
+
             break;
         default:
-            return userSocket.emit('send message to user',user.username,{messageType:parseErorr,content:"no message with this type"}); 
+            return userSocket.emit('send message to user',user.username,{messageType:parseErorr,content:"no message with this type"});
 
     }
 }
@@ -162,7 +162,3 @@ function handleMsg(inputObj,user,userSocket){
 
 
 addMsgToPrint(" Server is listening on port " + PORT);
-
-
-
-

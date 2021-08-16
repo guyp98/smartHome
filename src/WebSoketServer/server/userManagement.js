@@ -180,6 +180,7 @@ const getPowerState=(username)=>{
         return result.makeFailure("user or adimin not have power state"); 
     }
     else{
+        console.log(user.role.power);
         return result.makeOk(user.role.power);
     }
 }
