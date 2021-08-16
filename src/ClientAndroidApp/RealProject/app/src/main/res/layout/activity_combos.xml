@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Items"
+    tools:context=".ComboPage"
     android:orientation="vertical"
     android:gravity="center"
     android:paddingLeft="16dp"
@@ -13,12 +13,12 @@
 
 
     <TextView
-        android:paddingTop="100dp"
         android:id="@+id/textView_combo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
-        android:text="Appliance List"
+        android:paddingTop="100dp"
+        android:text="Combo List"
         android:textColor="@color/teal_700"
         android:textSize="32sp" />
 
@@ -30,44 +30,27 @@
 
         <Button
 
-            android:id="@+id/button_add_items"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="onButtonClickItems"
+            android:id="@+id/button_add_combos"
+            android:layout_width="262dp"
+            android:layout_height="50dp"
+            android:onClick="onClickCombo"
             android:text="Add"
             android:textAllCaps="false"
             android:textSize="18dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/buttonCombos"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:ignore="MissingConstraints" />
 
-        <Button
-            android:id="@+id/buttonCombos"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="65dp"
-            android:layout_marginRight="65dp"
-            android:onClick="onButtonClickItems"
-            android:text="Combos"
-            android:textAllCaps="false"
-            android:textSize="18dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ListView
-        android:paddingTop="10dp"
-        android:id="@+id/listView_items"
+
+
+    <ListView android:paddingTop="10dp"
+        android:id="@+id/listView_Combos"
         android:layout_width="match_parent"
-        android:layout_height="576dp" >
-
-
-
-    </ListView>
+        android:layout_height="match_parent"/>
 
 
 

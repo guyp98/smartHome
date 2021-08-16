@@ -7,13 +7,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.SwitchCompat;
 
-public class ProgramViewHolder {
+public class ItemSingleHolder {
     ImageView itemImage;
     TextView progTitle;
     TextView progDesc;
     SwitchCompat progCheck;
 
-    ProgramViewHolder (View v){
+    ItemSingleHolder(View v){
       itemImage = v.findViewById(R.id.imageView2);
       progTitle = v.findViewById(R.id.textView1);
       progDesc = v.findViewById(R.id.textView2);

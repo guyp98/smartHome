@@ -52,7 +52,6 @@ public class MainMenu extends AppCompatActivity {
 
             loadingPage.startLoadingDialog();
             //to do find better idea
-            Log.d("mainThread","my id is "+Thread.currentThread().getName());
 
 
 
@@ -60,7 +59,6 @@ public class MainMenu extends AppCompatActivity {
                 @Override
                 public void run() {
 
-                        Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
                         for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
 
                             try {
@@ -86,9 +84,21 @@ public class MainMenu extends AppCompatActivity {
         if (view.getId() == buttonCombos.getId()) {
             started=false;
 
-            LoginPage.ws.send("combos");
-            Intent itemsAct = new Intent(MainMenu.this, LoginPage.class);
+
+            Intent itemsAct = new Intent(MainMenu.this, ComboPage.class);
             startActivity(itemsAct);
+            LoginPage.store = "";
+            String jsonLoginStr;
+            if (LoginPage.testing)
+                jsonLoginStr = "{messageType:combosResponse ,appliances: [], predicament:[], success:true }";
+            else
+                jsonLoginStr = "{messageType:combos ,username:" + LoginPage.username + "}";
+            JSONObject jsonLogin = new JSONObject(jsonLoginStr);
+            LoginPage.ws.send(jsonLogin.toString());
+
+
+
+
         }
     }
     public void onSocketUpdate(JSONObject jsonObject) {

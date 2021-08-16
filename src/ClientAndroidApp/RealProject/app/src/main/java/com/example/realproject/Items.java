@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
@@ -36,7 +35,7 @@ public class Items extends AppCompatActivity {
     private Runnable checkIfResponse;
     //SharedPreferences sharedPreferences;
     //haredPreferences.Editor editor;
-    private ProgramAdapter programAdapter;
+    private ItemArrayAdapter programAdapter;
     int dataSize;
     int index = 0;
 
@@ -94,7 +93,7 @@ public class Items extends AppCompatActivity {
                 }
             }
             editItemsIntent = new Intent(this, ItemInfo.class);
-            itemsListView = findViewById(R.id.listViewItems);
+            itemsListView = findViewById(R.id.listView_items);
             itemsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -107,7 +106,7 @@ public class Items extends AppCompatActivity {
                     overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
                 }
             });
-            programAdapter = new ProgramAdapter(this, area, progImag, desc,isChecked,username);
+            programAdapter = new ItemArrayAdapter(this, area, progImag, desc,isChecked,username);
             itemsListView.setAdapter(programAdapter);
 
             addItemToList("Dan","Light",2,"0x0CFF3D",false);
@@ -167,7 +166,7 @@ public class Items extends AppCompatActivity {
 
 
     public void onButtonClickItems(View view) throws JSONException {
-        if (view.getId() == R.id.buttonAdd) {
+        if (view.getId() == R.id.button_add_items) {
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
             String jsonLoginStr;

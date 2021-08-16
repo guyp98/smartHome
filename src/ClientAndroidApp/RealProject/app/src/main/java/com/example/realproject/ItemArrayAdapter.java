@@ -2,13 +2,10 @@ package com.example.realproject;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 
@@ -17,10 +14,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-import android.os.Vibrator;
-import android.widget.Toast;
-
-public class ProgramAdapter extends ArrayAdapter<String> {
+public class ItemArrayAdapter extends ArrayAdapter<String> {
     Context context;
     ArrayList<Integer> images;
     ArrayList<String> progName, programDesc, username;
@@ -29,11 +23,10 @@ public class ProgramAdapter extends ArrayAdapter<String> {
     private Activity itemsActivity;
     private boolean started=false;
     private Runnable checkIfResponse;
-    Runnable checkIfLoadedThread;
 
 
 
-    public ProgramAdapter(Context context, ArrayList<String> progName, ArrayList<Integer> images, ArrayList<String> programDesc, ArrayList<Boolean> isChecked, ArrayList<String> username) {
+    public ItemArrayAdapter(Context context, ArrayList<String> progName, ArrayList<Integer> images, ArrayList<String> programDesc, ArrayList<Boolean> isChecked, ArrayList<String> username) {
         super(context, R.layout.listview_items, R.id.textView1, progName);
         this.context = context;
         this.images = images;
@@ -46,14 +39,14 @@ public class ProgramAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View singleItem = convertView;
-        ProgramViewHolder holder = null;
+        ItemSingleHolder holder = null;
         if (singleItem == null) {
             LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             singleItem = layoutInflater.inflate(R.layout.listview_items, parent, false);
-            holder = new ProgramViewHolder(singleItem);
+            holder = new ItemSingleHolder(singleItem);
             singleItem.setTag(holder);
         } else
-            holder = (ProgramViewHolder) singleItem.getTag();
+            holder = (ItemSingleHolder) singleItem.getTag();
 
 
         holder.itemImage.setImageResource(images.get(position));
