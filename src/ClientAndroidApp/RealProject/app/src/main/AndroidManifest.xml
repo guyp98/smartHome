@@ -13,15 +13,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RealProject"
         android:usesCleartextTraffic="true">
-        <activity android:name=".ComboPage"></activity>
-        <activity android:name=".EditItem" />
-        <activity android:name=".ItemInfo" />
-        <activity android:name=".RegisterScreen" />
-        <activity android:name=".LoadingPage" />
+        <activity android:name=".Combos.ComboEdit"></activity>
+        <activity android:name=".Combos.ComboAddPage" />
+        <activity android:name=".Combos.ComboInfo" />
+        <activity android:name=".Combos.ComboPage" />
+        <activity android:name=".Items.EditItem" />
+        <activity android:name=".Items.ItemInfo" />
+        <activity android:name=".Login.RegisterScreen" />
+        <activity android:name=".PopUp.LoadingPage" />
         <activity android:name=".MainMenu" />
-        <activity android:name=".AddScreen" />
-        <activity android:name=".Items" />
-        <activity android:name=".LoginPage">
+        <activity android:name=".Items.AddScreen" />
+        <activity android:name=".Items.Items" />
+        <activity android:name=".Login.LoginPage">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

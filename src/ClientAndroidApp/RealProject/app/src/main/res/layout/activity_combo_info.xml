@@ -5,29 +5,28 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    tools:context=".Items.ItemInfo">
+    tools:context=".Combos.ComboInfo">
 
     <Button
-        android:id="@+id/button_items_back"
-        android:layout_width="80dp"
-        android:layout_height="46dp"
+        android:id="@+id/button_combo_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="?android:attr/selectableItemBackground"
-        android:onClick="OnClickInfo"
-        android:text="Items"
+        android:onClick="onClickInfoCombo"
+        android:text="Combos"
         android:textAllCaps="false"
-
         android:textColor="@color/darkGrey"
         app:layout_constraintStart_toEndOf="@+id/imageView_Chevron_left_info"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button_edit_item"
-        android:layout_width="80dp"
-        android:layout_height="46dp"
+        android:id="@+id/button_edit_combo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:background="?android:attr/selectableItemBackground"
-        android:onClick="OnClickInfo"
+        android:onClick="onClickInfoCombo"
         android:text="Edit"
         android:textAllCaps="false"
         android:textColor="@color/darkGrey"
@@ -45,54 +44,41 @@
         android:src="@drawable/ic_chevron_left_24" />
 
     <ImageView
-        android:id="@+id/imageView_edititem"
+        android:id="@+id/imageView_editcombo"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="100dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/picture_lightbuldyellow" />
+        app:srcCompat="@drawable/picture_appliances" />
 
     <TextView
-        android:id="@+id/textView_appliance_name"
+        android:id="@+id/textView_combo_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="Dans Room"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView_edititem" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView_editcombo" />
+
 
     <Button
-        android:id="@+id/button_add_to_combo"
+        android:id="@+id/button_set_timer_combo"
         android:layout_width="275dp"
         android:layout_height="52dp"
-        android:layout_marginTop="53dp"
-        android:text="Add to combo"
-        android:textAllCaps="false"
-        android:textSize="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView_appliance_name" />
-
-    <Button
-        android:id="@+id/button_set_timer"
-        android:layout_width="275dp"
-        android:layout_height="52dp"
-        android:layout_marginTop="8dp"
         android:text="Set timer"
         android:textAllCaps="false"
 
         android:textSize="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_add_to_combo" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/textView_notes"
+        android:id="@+id/textView_notes_combo"
         android:layout_width="275dp"
         android:layout_height="137dp"
         android:layout_marginTop="19dp"
@@ -101,8 +87,7 @@
         android:textSize="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_set_timer" />
-
+        app:layout_constraintTop_toBottomOf="@+id/button_set_timer_combo" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

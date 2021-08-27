@@ -1,21 +1,19 @@
-package com.example.realproject;
+package com.example.realproject.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.realproject.Login.LoginPage;
+import com.example.realproject.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import okhttp3.WebSocketListener;
 
 public class RegisterScreen extends AppCompatActivity {
 
@@ -55,7 +53,10 @@ public class RegisterScreen extends AppCompatActivity {
 
                 JSONObject jsonLogin = new JSONObject(jsonLoginStr);
                 LoginPage.store = "";
-                LoginPage.ws.send(jsonLogin.toString());
+                if(LoginPage.echo)
+                    LoginPage.ws.send(jsonLogin.toString());
+                else
+                    LoginPage.store=jsonLogin.toString();
 
                 //to do find better idea
 
@@ -64,6 +65,7 @@ public class RegisterScreen extends AppCompatActivity {
                     @Override
                     public void run() {
                             Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
+                        started=false;
                             for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
                                 try {
                                     Thread.sleep(LoginPage.threadSleep);

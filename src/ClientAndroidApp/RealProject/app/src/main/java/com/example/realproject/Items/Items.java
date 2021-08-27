@@ -1,16 +1,25 @@
-package com.example.realproject;
+package com.example.realproject.Items;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
+
+import com.example.realproject.Combos.ComboItem;
+import com.example.realproject.Combos.ComboPage;
+import com.example.realproject.ItemsAdapter.ItemArrayAdapter;
+import com.example.realproject.Login.LoginPage;
+import com.example.realproject.MainMenu;
+import com.example.realproject.R;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,21 +27,30 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 public class Items extends AppCompatActivity {
 
     public static final int AddScreen=1,ItemInfo=2,EditItem=3;
-    private ArrayList<String> area, desc, username;
-    private ArrayList<Integer> progImag, idList;
+
+
     private ArrayList<Boolean> isChecked;
     private String areaString, descString;
-    public static Vibrator vItem;
     private ListView itemsListView;
     private Intent editItemsIntent;
     private HashMap<String ,Boolean> usernameSwitch;
-    private int positionSaver,loadedIndex=0,idInt;
+    private int positionSaver,loadedIndex=0;
     private Boolean started=false;
     private Runnable checkIfResponse;
+
+
+    public static Vibrator vItem;
+    public static HashMap<String, ArrayList<ComboItem>> groups;
+    public static ArrayList<String> username, area, desc,title;
+    public static ArrayList<Integer> progImag;
+
+
+
     //SharedPreferences sharedPreferences;
     //haredPreferences.Editor editor;
     private ItemArrayAdapter programAdapter;
@@ -57,12 +75,36 @@ public class Items extends AppCompatActivity {
             area = new ArrayList<>();
             desc = new ArrayList<>();
             progImag = new ArrayList<>();
-            idList = new ArrayList<>();
             isChecked = new ArrayList<>();
             username=new ArrayList<>();
             usernameSwitch = new HashMap<>();
+            groups = new HashMap<>();
+            title = new ArrayList<>();
+
+            for (String groupName: Items.groups.keySet())
+            {
+                title.add(groupName);
+            }
 
 
+
+            editItemsIntent = new Intent(this, ItemInfo.class);
+            itemsListView = findViewById(R.id.listView_items);
+            itemsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    positionSaver = position;
+                    editItemsIntent.putExtra("areaInput",area.get(position));
+                    editItemsIntent.putExtra("desc",desc.get(position));
+                    editItemsIntent.putExtra("picture",progImag.get(position));
+                    editItemsIntent.putExtra("username",username.get(position));
+                    startActivityForResult(editItemsIntent, Items.ItemInfo);
+
+                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
+                }
+            });
+            programAdapter = new ItemArrayAdapter(this, area, progImag, desc,isChecked,username);
+            itemsListView.setAdapter(programAdapter);
 
 
 
@@ -76,41 +118,61 @@ public class Items extends AppCompatActivity {
               JSONArray switchArray = jsonObject.getJSONArray("predicament");
                 for (int i = 0; i < switchArray.length(); i++) {
                     JSONObject switchSingle=switchArray.getJSONObject(i);
-                    usernameSwitch.put(switchSingle.getString("username"),switchSingle.getBoolean("state"));
-                    username.add(switchSingle.getString("username"));
+                    String usernameTemp = switchSingle.getString("username");
+                    usernameSwitch.put(usernameTemp,switchSingle.getBoolean("state"));
+
+                    JSONArray jsonGroups = switchSingle.getJSONArray("groups");
+
+                    for (int j = 0; j < jsonGroups.length(); j++) {
+                        JSONObject gSingle = jsonGroups.getJSONObject(i);
+                        String groupTemp = gSingle.getString("name");
+                        if(!groups.containsKey(groupTemp)){
+                            groups.put(groupTemp,new ArrayList<>());
+                            title.add(groupTemp);
+                        }
+                        groups.get(groupTemp).add(new ComboItem(usernameTemp,gSingle.getString("scenerioOn"),gSingle.getString("scenerioOff")));
+                    }
+
+                    ComboItem itemC = new ComboItem(usernameTemp,switchSingle.getString("scenerioOn"),switchSingle.getString("scenerioOff"));
+
                 }
 
                 JSONArray jsonArray = jsonObject.getJSONArray("appliances");
                 for (int i = 0; i < jsonArray.length(); i++) {
+
                     JSONObject applian = jsonArray.getJSONObject(i);
-                    idInt = applian.getInt("id");
                     String usernameString = applian.getString("username");
                     String details= applian.getString("detail");
                     JSONObject jsonSingleAppliance = new JSONObject(details);
                     areaString = jsonSingleAppliance.getString("area");
                     descString = jsonSingleAppliance.getString("desc");
-                    addItemToList(areaString, descString,idInt,usernameString,usernameSwitch.get(usernameString));
+                    addItemToList(areaString, descString,usernameString,usernameSwitch.get(usernameString));
+
+
+                    /*JSONArray jsonArrayGroups = jsonObject.getJSONArray("groups");
+                    for (int j = 0; j < jsonArrayGroups.length(); j++) {
+                        JSONObject groupSingle = jsonArray.getJSONObject(i);
+                        String groupName = groupSingle.getString("name");
+                        if(!groups.containsKey(groupName))
+                            groups.put(groupName,new ArrayList<String>());
+                        groups.get(groupName).add(usernameString);
+
+
+
+                    }
+*/
+
+
+
                 }
             }
-            editItemsIntent = new Intent(this, ItemInfo.class);
-            itemsListView = findViewById(R.id.listView_items);
-            itemsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    positionSaver = position;
-                    editItemsIntent.putExtra("areaInput",area.get(position));
-                    editItemsIntent.putExtra("picture",progImag.get(position));
-                    editItemsIntent.putExtra("username",username.get(position));
-                    startActivityForResult(editItemsIntent, Items.ItemInfo);
 
-                    overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_left);
-                }
-            });
-            programAdapter = new ItemArrayAdapter(this, area, progImag, desc,isChecked,username);
-            itemsListView.setAdapter(programAdapter);
 
-            addItemToList("Dan","Light",2,"0x0CFF3D",false);
-            addItemToList("Guy","Water-Heater",1,"0xD2FF3D",false);
+
+            if(LoginPage.testing) {
+                addItemToList("Dan","Light","0xBB23D1",false);
+                addItemToList("Guy","Water-Heater","0xD2FF3D",false);
+            }
 
 
         } catch (Exception e) {
@@ -118,6 +180,11 @@ public class Items extends AppCompatActivity {
         }
     }
 
+    public static void addGroup(String groupName, ArrayList<ComboItem> actions){
+        title.add(groupName);
+        groups.put(groupName,actions);
+
+    }
 
     public void changeName (int position, String areaString ){
         area.set(position,areaString);
@@ -139,7 +206,7 @@ public class Items extends AppCompatActivity {
                 String usernameString = data.getStringExtra("username");
 
                 int id = data.getIntExtra("id", -1);
-                addItemToList(areaString, typeString, id, usernameString, stateSwitch);
+                addItemToList(areaString, typeString, usernameString, stateSwitch);
                 getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
 
 
@@ -153,15 +220,56 @@ public class Items extends AppCompatActivity {
                 programAdapter.notifyDataSetChanged();
 
             } else if (resultCode == LoginPage.ResultRemoved) {
+                Handler handler = new Handler();
+                checkIfResponse = new Runnable() {
+                    @Override
+                    public void run() {
+                        for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
+                            try {
+                                Thread.sleep(LoginPage.threadSleep);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (!LoginPage.store.isEmpty()) {
+                                started = true;
+                                Bundle b = new Bundle();
 
-                removeAppliance(positionSaver);
+                                JSONObject jsonObject = null;
+                                try {
+
+                                    jsonObject = new JSONObject(LoginPage.store);
+                                    String boo = jsonObject.getString("removed");
+                                    if (boo.equals("true")) {
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                removeAppliance(positionSaver);
+                                            }
+                                        });
+                                    } else {
+                                        handler.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                Toast.makeText(getApplicationContext(), "Could not delete item", Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                };
+                Thread itemsActThread = new Thread(checkIfResponse);
+                itemsActThread.start();
+
 
             }
 
 
         }
     }
-
 
 
 
@@ -174,15 +282,20 @@ public class Items extends AppCompatActivity {
                 jsonLoginStr = "{messageType:getAllAppliances,success:true,appliances:[{username:D33DFF,type:SmartSensor},{username:FF2DC8,type:SmartSensor}] }";
             else
                 jsonLoginStr = "{messageType:getAllAppliances}";
+
             JSONObject jsonLogin = new JSONObject(jsonLoginStr);
             LoginPage.store = "";
-            LoginPage.ws.send(jsonLogin.toString());
+            if(LoginPage.echo)
+                LoginPage.ws.send(jsonLogin.toString());
+            else
+                LoginPage.store=jsonLogin.toString();
 
-            Intent addScreenIntent = new Intent(Items.this, AddScreen.class);
+            Intent addScreenIntent = new Intent(Items.this, com.example.realproject.Items.AddScreen.class);
 
             checkIfResponse = new Runnable() {
                 @Override
                 public void run() {
+                    started=false;
                     for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
                         try {
                             Thread.sleep(LoginPage.threadSleep);
@@ -236,6 +349,17 @@ public class Items extends AppCompatActivity {
             itemsActThread.start();
             Log.d("check", "reached after thread start");
         } else if (view.getId() == R.id.buttonCombos) {
+            ArrayList<ComboItem> usernameExample = new ArrayList<>();
+            usernameExample.add(new ComboItem("0xBB23D1", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xBB23D1" + "\",  msg:true}","{messageType:flipTheSwitch, sendToUsername:\"" + "0xBB23D1" + "\",  msg:false}"));
+            usernameExample.add(new ComboItem("0xD2FF3D", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xD2FF3D" + "\",  msg:true}", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xBB23D1" + "\",  msg:false}"));
+            if (!groups.containsKey("dan"))
+                addGroup("dan",usernameExample);
+
+
+
+            Intent itemsAct = new Intent(this, ComboPage.class);
+            startActivity(itemsAct);
+
 
         }
         //on click invisible
@@ -245,12 +369,30 @@ public class Items extends AppCompatActivity {
     }
 
 
-    public void addItemToList(String areaString, String descString, int id,String usernameString,Boolean stateSwitch) {
+    public static String getAreaFromUsername(String usernameString){
+        for (int i = 0; i < username.size(); i++) {
+            if(username.get(i).equals(usernameString))
+                return area.get(i);
+        }
+        return null;
+
+    }
+
+    public static Integer getPositionFromUsername (String usernameString){
+        for (int i = 0; i < username.size(); i++) {
+            if(username.get(i).equals(usernameString))
+                return i;
+        }
+        return null;
+
+
+    }
+
+    public void addItemToList(String areaString, String descString,String usernameString,Boolean stateSwitch) {
         area.add(areaString);
         desc.add(descString);
         username.add(usernameString);
         isChecked.add(stateSwitch);
-        idList.add(id);
         if (descString.equals("Light"))
             progImag.add(R.drawable.picture_bulb_2_small);
         /*else if (descString.equals("Water Heater"))
@@ -268,11 +410,12 @@ public class Items extends AppCompatActivity {
         desc.remove(positionSaver);
         username.remove(positionSaver);
         isChecked.remove(positionSaver);
-        idList.remove(positionSaver);
         progImag.remove(positionSaver);
 
         programAdapter.notifyDataSetChanged();
 
     }
+
+
 
 }

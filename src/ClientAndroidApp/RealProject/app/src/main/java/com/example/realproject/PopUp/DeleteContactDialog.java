@@ -1,4 +1,4 @@
-package com.example.realproject;
+package com.example.realproject.PopUp;
 
 import android.app.AlertDialog;
 import android.app.Dialog;

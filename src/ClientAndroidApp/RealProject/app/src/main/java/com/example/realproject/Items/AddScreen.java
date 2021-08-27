@@ -1,4 +1,4 @@
-package com.example.realproject;
+package com.example.realproject.Items;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,11 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
+import com.example.realproject.Login.LoginPage;
+import com.example.realproject.R;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
@@ -51,6 +51,7 @@ public class AddScreen extends AppCompatActivity {
         ArrayAdapter arType = new ArrayAdapter(this, R.layout.layout_dropdown_add, getResources().getStringArray(R.array.TypeOfAppliances));
         ArrayAdapter arUsername = new ArrayAdapter(this, R.layout.layout_dropdown_add, usernameArray.toArray());
 
+
         arType.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         arUsername.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
@@ -74,11 +75,14 @@ public class AddScreen extends AppCompatActivity {
             if(LoginPage.testing)
                 jsonAddAppliaceStr = "{messageType:addApplianceResponse, added:true, state:false, itemId:"+idTesting+" }";
             else
-                    jsonAddAppliaceStr = "{messageType:addAppliance,username:"+usernameString+", details:" + jsonLogin.toString() + "}";
+                jsonAddAppliaceStr = "{messageType:addAppliance,username:\""+usernameString+"\", details:" + jsonLogin.toString() + "}";
 
 
             JSONObject jsonAddAppliance = new JSONObject(jsonAddAppliaceStr);
-            LoginPage.ws.send(jsonAddAppliance.toString());
+            if(LoginPage.echo)
+                LoginPage.ws.send(jsonAddAppliance.toString());
+            else
+                LoginPage.store=jsonAddAppliance.toString();
         } catch (JSONException e) {
             Log.e("Json error",desc);
             Log.e("Json error",e.toString());
@@ -109,6 +113,7 @@ public class AddScreen extends AppCompatActivity {
                 public void run() {
 
                         Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
+                        started=false;
                         for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
 
                             try {
@@ -130,20 +135,16 @@ public class AddScreen extends AppCompatActivity {
                                         resultIntent.putExtra("id", id);
                                         finish();
 
-                                    } else
+                                    } else {
                                         setResult(Activity.RESULT_CANCELED, resultIntent);
+                                        finish();
+                                    }
 
 
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-
-
                             }
-
-
-
-
                         }
                         setResult(Activity.RESULT_CANCELED, resultIntent);
                         finish();

@@ -1,4 +1,4 @@
-package com.example.realproject;
+package com.example.realproject.ItemsAdapter;
 
 import android.app.Activity;
 import android.content.Context;
@@ -8,6 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+
+import com.example.realproject.Login.LoginPage;
+import com.example.realproject.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -67,19 +70,22 @@ public class ItemArrayAdapter extends ArrayAdapter<String> {
                     if (LoginPage.testing)
                         switchChanged = "{messageType:filpTheSwitchResponse,success=true,state:on}";
                     else
-                        switchChanged = "{messageType:flipTheSwitch, sendToUsername:" + username.get(position) + ",  msg:" + bo + "}";
+                        switchChanged = "{messageType:flipTheSwitch, sendToUsername:\"" + username.get(position) + "\",  msg:" + bo + "}";
                     try {
                         //Items.vItem.vibrate(100);
 
 
                         JSONObject jsonSwitchChanged = new JSONObject(switchChanged);
                         LoginPage.store = "";
-                        LoginPage.ws.send(jsonSwitchChanged.toString());
+                        if(LoginPage.echo)
+                             LoginPage.ws.send(jsonSwitchChanged.toString());
+                        else
+                            LoginPage.store=jsonSwitchChanged.toString();
 
                         checkIfResponse = new Runnable() {
                             @Override
                             public void run() {
-
+                                started=false;
                                     for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
 
                                         try {

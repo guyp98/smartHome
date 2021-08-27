@@ -4,17 +4,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.realproject.Combos.ComboPage;
+import com.example.realproject.Items.Items;
+import com.example.realproject.Login.LoginPage;
+import com.example.realproject.PopUp.LoadingPage;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import okhttp3.WebSocket;
 
 public class MainMenu extends AppCompatActivity {
 
@@ -48,7 +48,11 @@ public class MainMenu extends AppCompatActivity {
             else
                 jsonLoginStr = "{messageType:itemsDataInitialise ,username:" + LoginPage.username + "}";
             JSONObject jsonLogin = new JSONObject(jsonLoginStr);
-            LoginPage.ws.send(jsonLogin.toString());
+
+            if(LoginPage.echo)
+                LoginPage.ws.send(jsonLogin.toString());
+            else
+                LoginPage.store=jsonLogin.toString();
 
             loadingPage.startLoadingDialog();
             //to do find better idea
@@ -58,7 +62,7 @@ public class MainMenu extends AppCompatActivity {
             checkIfResponse = new Runnable() {
                 @Override
                 public void run() {
-
+                    started=false;
                         for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
 
                             try {

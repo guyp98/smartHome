@@ -1,17 +1,17 @@
-package com.example.realproject;
+package com.example.realproject.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.realproject.MainMenu;
+import com.example.realproject.R;
+import com.example.realproject.WebSocketRecieve;
 import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
@@ -31,7 +31,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     public static String store,username;
     public static final Integer ResultRemoved=2,threadSleep=3,threadCycle=3000;
     public static WebSocket ws;
-    public static boolean testing=true;
+    public static boolean testing=true,echo=false;
 
 
 
@@ -42,7 +42,6 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                 outputFromServer.setText(outputFromServer.getText().toString() + "\n\n" + txt);
             }
         });
-
     }
 
     @Override
@@ -62,7 +61,8 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
         if (testing)
             request = new Request.Builder().url("ws://echo.websocket.org").build();
         else
-            request = new Request.Builder().url("ws://cthulhuserver.duckdns.org:5001").build();
+            request = new Request.Builder().url("ws://192.168.14.160:5001").build();
+            //request = new Request.Builder().url("ws://cthulhuserver.duckdns.org:5001").build();
         EchoWebSocketListener listener = new EchoWebSocketListener();
         ws = client.newWebSocket(request, listener);
     }
@@ -92,7 +92,12 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
 
 
                 JSONObject jsonLogin = new JSONObject(jsonLoginStr);
-                ws.send(jsonLogin.toString());
+                if(echo)
+                    ws.send(jsonLogin.toString());
+                else {
+                    Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
+                    startActivity(itemsAct);
+                }
 
                 //Toast.makeText(LoginPage.this,"username "+ username +" password" + password,Toast.LENGTH_SHORT).show();
             }

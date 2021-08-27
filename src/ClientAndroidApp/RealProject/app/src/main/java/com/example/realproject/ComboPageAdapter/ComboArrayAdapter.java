@@ -1,21 +1,17 @@
-package com.example.realproject;
+package com.example.realproject.ComboPageAdapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.CompoundButton;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.example.realproject.R;
 
 import java.util.ArrayList;
 
 public class ComboArrayAdapter  extends ArrayAdapter<String> {
     private Context context;
-
     private ArrayList<String> titles;
     private ArrayList<Boolean> isChecked;
     private boolean started = false;
