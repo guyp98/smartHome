@@ -109,6 +109,8 @@ public class ComboAddAdapter extends ArrayAdapter<String> {
         holder.itemImage.setImageResource(images.get(position));
         holder.title.setText(progName.get(position));
         holder.progCheck.setChecked(programSwitch.get(position));
+
+
         ComboAddHolder finalHolder1 = holder;
         holder.progCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

@@ -5,8 +5,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.CompoundButton;
 
+import com.example.realproject.Login.LoginPage;
 import com.example.realproject.R;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -40,24 +45,38 @@ public class ComboArrayAdapter  extends ArrayAdapter<String> {
 
         holder.title.setText(titles.get(position));
         holder.progCheck.setChecked(isChecked.get(position));
-        /*holder.progCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        ComboSingleHolder finalHolder = holder;
+        holder.progCheck.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-
+                try {
                 String bo = Boolean.toString(isChecked);
                 //todo add username
                 String switchChanged;
-                if (LoginPage.testing)
-                    switchChanged = "{messageType:filpTheSwitchResponse,success=true,state:on}";
-                else
-                    switchChanged = "{messageType:flipTheSwitch, sendToUsername:" + username.get(position) + ",  msg:" + bo + "}";
-                try {
+                JSONObject jsonSend = new JSONObject();
+                    if (LoginPage.testing){
+                        jsonSend.put("messageType","group");
+                        jsonSend.put("groupName", finalHolder.title.getText());
+                        if(isChecked)
+                            jsonSend.put("action","groupScenarioOn");
+                        else
+                            jsonSend.put("action","groupScenarioOff");
+                        jsonSend.put("messageType","group");
+
+                    }
+                    else {
+                        jsonSend.put("messageType", "groupResponse");
+                        jsonSend.put("success","true");
+                    }
+
                     //Items.vItem.vibrate(100);
 
 
-                    JSONObject jsonSwitchChanged = new JSONObject(switchChanged);
                     LoginPage.store = "";
-                    LoginPage.ws.send(jsonSwitchChanged.toString());
+                    if(LoginPage.echo)
+                        LoginPage.ws.send(jsonSend.toString());
+                    else
+                        LoginPage.store = jsonSend.toString();
 
                     checkIfResponse = new Runnable() {
                         @Override
@@ -79,13 +98,6 @@ public class ComboArrayAdapter  extends ArrayAdapter<String> {
                                         JSONObject jsonObject = new JSONObject(LoginPage.store);
                                         String boo = jsonObject.getString("success");
                                         if (boo.equals("true")) {
-
-
-                                        } else {
-
-                                            programSwitch.set(position, !programSwitch.get(position));
-
-
                                         }
 
 
@@ -103,12 +115,7 @@ public class ComboArrayAdapter  extends ArrayAdapter<String> {
                     e.printStackTrace();
                 }
             }
-            //}
         });
-            }
-        });*/
-
-
         return singleItem;
 
     }

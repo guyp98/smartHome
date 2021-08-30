@@ -34,6 +34,7 @@ public class ComboEdit extends AppCompatActivity {
     private ComboAddAdapter programAdapter;
     private ArrayList<Boolean> isChecked;
     private String name;
+    private Spinner sp;
 
     @Override
 
@@ -44,6 +45,7 @@ public class ComboEdit extends AppCompatActivity {
         save = findViewById(R.id.button_save);
         groupNameTil = findViewById(R.id.textInputComboNameEdit);
         applianceListview = findViewById(R.id.listview_combo_edit);
+        sp= findViewById(R.id.spinner_scenario);
 
         isChecked =new ArrayList<>();
         ComboPage.options = new ArrayList<>();
@@ -72,8 +74,8 @@ public class ComboEdit extends AppCompatActivity {
 
 
        for (int i = 0; i < programAdapter.getCount(); i++) {
-         Spinner d = programAdapter.getView(i,null,applianceListview).findViewById(R.id.spinner_scenario);
-           TextView dview = programAdapter.getView(i,null,applianceListview).findViewById(R.id.textView_title_group);
+            Spinner d = programAdapter.getView(i,null,applianceListview).findViewById(R.id.spinner_scenario);
+            TextView dview = programAdapter.getView(i,null,applianceListview).findViewById(R.id.textView_title_group);
             dview.setText("I win");
            //applianceListview.getChildAt(i).findViewById(R.id.spinner_scenario);
            d.setSelection(2);
@@ -87,6 +89,7 @@ public class ComboEdit extends AppCompatActivity {
         if (view.getId() == save.getId()) {
             for (int i = 0; i < programAdapter.getCount(); i++) {
                 Spinner d = programAdapter.getView(i,null,applianceListview).findViewById(R.id.spinner_scenario);
+                int spin = d.getId();
                 //applianceListview.getChildAt(i).findViewById(R.id.spinner_scenario);
                 d.setSelection(3);
                 TextView dview = programAdapter.getView(i,null,applianceListview).findViewById(R.id.textView_title_group);
