@@ -29,12 +29,11 @@ public class ComboEdit extends AppCompatActivity {
     private TextInputLayout groupNameTil;
     private Boolean started = false;
     private Runnable checkIfResponse;
-    private Button save;
+    private Button save,delete;
     private ListView applianceListview;
     private ComboAddAdapter programAdapter;
     private ArrayList<Boolean> isChecked;
     private String name;
-    private Spinner sp;
 
     @Override
 
@@ -42,10 +41,10 @@ public class ComboEdit extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_combo_edit);
 
-        save = findViewById(R.id.button_save);
+        save = findViewById(R.id.button_save2);
+        delete = findViewById(R.id.button_delete_combo);
         groupNameTil = findViewById(R.id.textInputComboNameEdit);
         applianceListview = findViewById(R.id.listview_combo_edit);
-        sp= findViewById(R.id.spinner_scenario);
 
         isChecked =new ArrayList<>();
         ComboPage.options = new ArrayList<>();
@@ -66,7 +65,7 @@ public class ComboEdit extends AppCompatActivity {
 
         ArrayAdapter arScenarioOn = new ArrayAdapter(this, R.layout.layout_dropdown_add,  ComboPage.options.toArray());
 
-        programAdapter = new ComboAddAdapter(this, Items.area,Items.progImag, isChecked,arScenarioOn);
+        programAdapter = new ComboAddAdapter(this, Items.area,Items.progImag, isChecked,arScenarioOn,name);
         applianceListview.setAdapter(programAdapter);
 
 
@@ -85,26 +84,18 @@ public class ComboEdit extends AppCompatActivity {
 
     }
 
-    public void onClickSave(View view) {
+    public void onClickSave(View view)  {
         if (view.getId() == save.getId()) {
-            for (int i = 0; i < programAdapter.getCount(); i++) {
-                Spinner d = programAdapter.getView(i,null,applianceListview).findViewById(R.id.spinner_scenario);
-                int spin = d.getId();
-                //applianceListview.getChildAt(i).findViewById(R.id.spinner_scenario);
-                d.setSelection(3);
-                TextView dview = programAdapter.getView(i,null,applianceListview).findViewById(R.id.textView_title_group);
-                dview.setText("I win");
-            }
-            /*String groupName  = groupNameTil.getEditText().getText().toString();
+            String groupName = groupNameTil.getEditText().getText().toString();
 
-            sendAddGroup(groupName,ComboPage.checkedAppliances);
+            sendAddGroup(groupName, ComboPage.checkedAppliances);
 
 
             checkIfResponse = new Runnable() {
                 @Override
                 public void run() {
 
-                    started=false;
+                    started = false;
                     for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
 
                         try {
@@ -119,7 +110,7 @@ public class ComboEdit extends AppCompatActivity {
                                 String boo = jsonObject.getString("success");
                                 if (boo.equals("true")) {
                                     Items.title.add(groupName);
-                                    Items.groups.put(groupName,ComboPage.checkedAppliances);
+                                    Items.groups.put(groupName, ComboPage.checkedAppliances);
                                     finish();
                                 } else {
                                     finish();
@@ -133,18 +124,42 @@ public class ComboEdit extends AppCompatActivity {
                 }
 
 
-
             };
             Thread itemsActThread = new Thread(checkIfResponse);
             itemsActThread.start();
 
+        }
+        if (view.getId() == save.getId()) {
+            try {
+                JSONObject deleteJson = new JSONObject();
+                if(LoginPage.testing){
+
+                    deleteJson.put("messageType", "groupResponse");
+                    deleteJson.put("success","true");
+                    deleteJson.put("action","deleteGroup");
+                }else {
+                    deleteJson.put("messageType", "group");
+                    deleteJson.put("groupName", groupNameTil.getEditText().getText().toString());
+                    deleteJson.put("action", "deleteGroup");
+                }
+                LoginPage.store="";
+
+                if(LoginPage.echo)
+                    LoginPage.ws.send(deleteJson.toString());
+                else
+                    LoginPage.store=deleteJson.toString();
 
 
 
 
 
 
-*/
+
+            }catch (JSONException e){
+                e.printStackTrace();
+            }
+
+
         }
     }
 

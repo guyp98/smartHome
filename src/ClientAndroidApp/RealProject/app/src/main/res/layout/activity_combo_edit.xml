@@ -33,21 +33,36 @@
     </com.google.android.material.textfield.TextInputLayout>
 
     <Button
-        android:id="@+id/button_save"
-        android:layout_width="334dp"
+        android:id="@+id/button_delete_combo"
+        android:layout_width="150dp"
         android:layout_height="56dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginBottom="15dp"
-        android:text="Save Changes"
         android:onClick="onClickSave"
+        android:text="Delete Combo"
+        android:textAllCaps="false"
+        app:backgroundTint="#D30E0E"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/button_save2"
+        android:layout_width="150dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="15dp"
+        android:onClick="onClickSave"
+        android:text="Save Changes"
         android:textAllCaps="false"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ListView
         android:id="@+id/listview_combo_edit"
-        android:layout_width="match_parent"
-        android:layout_height="515dp"
+        android:layout_width="417dp"
+        android:layout_height="460dp"
 
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"

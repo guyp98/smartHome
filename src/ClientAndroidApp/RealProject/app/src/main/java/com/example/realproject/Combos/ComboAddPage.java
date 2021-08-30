@@ -68,7 +68,7 @@ public class ComboAddPage extends AppCompatActivity {
 
         ArrayAdapter arScenarioOn = new ArrayAdapter(this, R.layout.layout_dropdown_add,  ComboPage.options.toArray());
 
-        programAdapter = new ComboAddAdapter(this, Items.area,Items.progImag, isChecked,arScenarioOn);
+        programAdapter = new ComboAddAdapter(this, Items.area,Items.progImag, isChecked,arScenarioOn,null);
         applianceListview.setAdapter(programAdapter);
     }
     public void onClickAddGroup(View view){

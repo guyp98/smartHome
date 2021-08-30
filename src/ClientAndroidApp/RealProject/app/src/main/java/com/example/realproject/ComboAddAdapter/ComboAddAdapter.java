@@ -35,15 +35,17 @@ public class ComboAddAdapter extends ArrayAdapter<String> {
     private boolean started = false;
     private Runnable checkIfResponse;
     private ArrayAdapter options;
+    private String groupName;
 
 
-    public ComboAddAdapter(Context context, ArrayList<String> progName, ArrayList<Integer> images, ArrayList<Boolean> isChecked, ArrayAdapter options) {
+    public ComboAddAdapter(Context context, ArrayList<String> progName, ArrayList<Integer> images, ArrayList<Boolean> isChecked, ArrayAdapter options,String groupName) {
         super(context, R.layout.listview_single_item_group, R.id.textView_title_group, progName);
         this.context = context;
         this.images = images;
         this.progName = progName;
         this.programSwitch = isChecked;
         this.options=options;
+        this.groupName = groupName;
     }
 
     @Override
@@ -108,7 +110,43 @@ public class ComboAddAdapter extends ArrayAdapter<String> {
         });
         holder.itemImage.setImageResource(images.get(position));
         holder.title.setText(progName.get(position));
-        holder.progCheck.setChecked(programSwitch.get(position));
+        try {
+        if(groupName!=null) {
+            for(ComboItem cm : Items.groups.get(groupName)) {
+                ;
+                String d = holder.title.getText().toString();
+                String g = Items.getAreaFromUsername(cm.getUsername());
+                if (Items.getAreaFromUsername(cm.getUsername()).equals(holder.title.getText().toString()))
+                {
+                    holder.progCheck.setChecked(true);
+                    JSONObject scenario = new JSONObject(cm.getScenarioOn());
+                    if ("true".equals(scenario.getString("msg"))){
+                        holder.dropDownScenarioOn.setSelection(0);
+                    }
+                    else
+                        holder.dropDownScenarioOn.setSelection(1);
+                }
+
+
+
+
+            }
+        }else{
+
+            holder.progCheck.setChecked(programSwitch.get(position));
+
+
+
+
+        }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+
+
+
 
 
         ComboAddHolder finalHolder1 = holder;
