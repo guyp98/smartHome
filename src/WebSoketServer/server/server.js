@@ -5,11 +5,12 @@ const { addMsgToPrint } = require('./serverLogs');
 const Users=require('./userManagement');
 const result = require("./result");
 const { tryToConnect,echo,statusToServer,flipTheSwitch, usersComunnication,register,giveUserData
-    ,addAppliance,removeAppliance,getAllAppliances } = require('./commandAndRoles');
+    ,addAppliance,editAppliance,removeAppliance,getAllAppliances, group } = require('./commandAndRoles');
+const { actionSwitch }=require("./scenarios");
 
 const PORT = 5001;
 const wsServer = new WebSocket.Server({port: PORT});
-const socketsMap=new Map();
+const socketsMap=new Map();//username==>socket
 
 
 wsServer.on('connection', async function echoHandler(socket){
@@ -57,20 +58,20 @@ wsServer.on('close', function close() {
 });
 const parseErorr="parseErorr";//{"messageType":"","content":""}when the server cant parse user message
 
-function interpetMsg(msg,user,socket){//take msg string and user- and return astring to send back to the user
+function interpetMsg(msg,user,socket,respond=true){//take msg string and user- and return astring to send back to the user
     try{
         const inputObj=JSON.parse(msg);
         if(!Users.isConnected(user.username)&&inputObj.messageType!=tryToConnect&&inputObj.messageType!=register){//if user is not connected the only option is to try to connect
-            socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you need to login first"});/**todo need be jason */
+            respond&&socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you need to login first"});/**todo need be jason */
         }
         else if(!Users.isFunExist(inputObj.messageType)){
-            socket.emit('send message to user',user.username,{messageType:parseErorr,content: "no message with this type"});
+            respond&&socket.emit('send message to user',user.username,{messageType:parseErorr,content: "no message with this type"});
         }
         else if(Users.isConnected(user.username) && !Users.canAccess(user.username,inputObj.messageType)){
-            socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you dont have permition for this command"});
+            respond&&socket.emit('send message to user',user.username,{messageType:parseErorr,content: "you dont have permition for this command"});
         }
         else{
-            handleMsg(inputObj,user,socket);
+            handleMsg(inputObj,user,socket,respond);
         }
     }
     catch(msg){
@@ -80,7 +81,8 @@ function interpetMsg(msg,user,socket){//take msg string and user- and return ast
 }
 
 
-function handleMsg(inputObj,user,userSocket){
+function handleMsg(inputObj,user,userSocket,respond=true){
+    var res;
     switch(inputObj.messageType){
 
         case tryToConnect:
@@ -90,69 +92,94 @@ function handleMsg(inputObj,user,userSocket){
                 addMsgToPrint(user.username+" logedin");
             }
             result.isOk(connected)&&socketsMap.set(user.username,userSocket);
-            userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:result.isOk(connected),errorDetails:connected.msg });
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"loginResponse",loggedIn:result.isOk(connected),errorDetails:connected.msg });
             break;
 
         case echo:
-            userSocket.emit('send message to user',user.username,{messageType:"echoResponse",message:inputObj.toEcho });
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"echoResponse",message:inputObj.toEcho });
             break;
 
         case register:
-            var res=Users.addUser(inputObj.username,inputObj.password,inputObj.type);
-
-            userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:result.isOk(res),errorDetails:res.msg});
+            res=Users.addUser(inputObj.username,inputObj.password,inputObj.type);
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"registerResponse",registered:result.isOk(res),errorDetails:res.msg});
             break;
 
         case giveUserData:
-            var res=Users.retrunAllAppliances('state');
-            userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",success:result.isOk(res),appliances:Users.getUserData(user.username),predicament:result.isOk(res)?res.msg:[] });
+            res=Users.retrunAllAppliances('state');
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"itemsDataInitialiseResponse",success:result.isOk(res),appliances:Users.getUserData(user.username),predicament:result.isOk(res)?res.msg:[] });
             break;
 
         case addAppliance:
-            var res=Users.addApplianceToUser(user.username,inputObj.details,inputObj.username);
-            userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res)&&result.isOk(Users.getPowerState(user.username)),itemId:(res.msg)[0],state:Users.getPowerState(user.username).msg,errorDetails:(res.msg)[1]});
+            res=Users.addApplianceToUser(user.username,inputObj.details,inputObj.username);
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res)&&result.isOk(Users.getPowerState(inputObj.username)),itemId:(res.msg)[0],state:Users.getPowerState(inputObj.username).msg,errorDetails:(res.msg)[1]});
             break;
 
         case removeAppliance:
-            var res=Users.removeApplianceToUser(user.username,inputObj.id);
-            userSocket.emit('send message to user',user.username,{messageType:"removeApplianceResponse",removed:result.isOk(res),errorDetails:res.msg});
+            res=Users.removeApplianceToUser(user.username,inputObj.username);
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"removeApplianceResponse",removed:result.isOk(res),errorDetails:res.msg});
+            break;
+        
+        case editAppliance:
+            const msgRes=Users.editApplianceDetails();
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"editApplianceResponse",success:result.isOk(msgRes),errorDetails:res.msg});
             break;
 
         case getAllAppliances:
-            var res=Users.retrunAllAppliances('type');
-            userSocket.emit('send message to user',user.username,{messageType:"getAllAppliancesReponse",success:result.isOk(res),appliances:result.isOk(res)?res.msg:[],errorDetails:result.isOk(res)?"success":res.msg});
+            res=Users.retrunAllAppliances('type');
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"getAllAppliancesReponse",success:result.isOk(res),appliances:result.isOk(res)?res.msg:[],errorDetails:result.isOk(res)?"success":res.msg});
             break;
 
         case flipTheSwitch:
-            var res=Users.retrunAllAppliances('type');
+            res=Users.retrunAllAppliances('type');
             var theSwitch=result.isOk(res)?res.msg.find((tuple)=>{
                     return ((tuple.type==='smartSwitch')&&(tuple.username===inputObj.sendToUsername))
                 }):undefined;
             if(theSwitch!=undefined){//send comand to switch
                 if(Users.isConnected(theSwitch.username)){//check if the sitch is connected
-                    sendToSocket=socketsMap.get(inputObj.sendToUsername);
-                    sendToSocket.emit('send message to user',inputObj.sendToUsername,{messageType:"usersCommunication",from:user.username,message:inputObj.msg });//ask for switch status
+                    const sendToSocket=socketsMap.get(inputObj.sendToUsername);
+                    sendToSocket.emit('send message to user',inputObj.sendToUsername,{messageType:"usersCommunication",from:user.username,message:inputObj.msg?"on":"off" });//ask for switch status
                 }
                 else{
-                    userSocket.emit('send message to user',user.username,{messageType:"flipTheSwitchResponse",success:false,state:"undefined"});
+                    respond&&userSocket.emit('send message to user',user.username,{messageType:"flipTheSwitchResponse",success:false,state:"undefined"});
                 }
             }
             else{
-                userSocket.emit('send message to user',user.username,{messageType:"flipTheSwitchResponse",success:false,state:"undefined"});
+                respond&&userSocket.emit('send message to user',user.username,{messageType:"flipTheSwitchResponse",success:false,state:"undefined"});
             }
             break;
         case statusToServer:
-            var res=Users.setPowerState(user.username,inputObj.status=="on"?true:inputObj.status=="off");
+            res=Users.setPowerState(user.username,inputObj.status=="on");
             if(Users.isConnected(inputObj.sendTo)){
-                sendToSocket=socketsMap.get(inputObj.sendTo);
-                sendToSocket.emit('send message to user',inputObj.sendTo,{messageType:"flipTheSwitchResponse",success:result.isOk(res),state:result.isOk(res)?res.msg:"undefined"});
+                const sendToSocket=socketsMap.get(inputObj.sendTo);
+                respond&&sendToSocket.emit('send message to user',inputObj.sendTo,{messageType:"flipTheSwitchResponse",success:result.isOk(res),state:result.isOk(res)?res.msg:"undefined"});
             }
             break;
         case usersComunnication:
-            sendToSocket=socketsMap.get(inputObj.sendTo);
+            const sendToSocket=socketsMap.get(inputObj.sendTo);
             sendToSocket.emit('send message to user',inputObj.sendTo,{messageType:"usersCommunication",from:user.username,message:inputObj.msg });
-
             break;
+
+        case group:
+            res =actionSwitch(inputObj.action,inputObj.groupName,inputObj.names);
+            if(inputObj.action!="groupScenarioOn"&&inputObj.action!="groupScenarioOff"){
+                return userSocket.emit('send message to user',user.username,{messageType:"groupRespones",success:result.isOk(res),names:res.msg.erorrUsers,action:inputObj.action,groupName:inputObj.groupName,errorDetails:res.msg.comment});
+            }
+            else if(inputObj.action=="groupScenarioOn"){
+                res.forEach(app=>{
+                    const sen=app.role.groups.get(inputObj.groupName);
+                    const soc=socketsMap.get(app.username);
+                    interpetMsg(JSON.stringify(sen.onScenario),user,userSocket,false);
+                });
+            }
+            else if(inputObj.action=="groupScenarioOff"){
+                res.forEach(app=>{
+                    const sen=app.role.groups.get(inputObj.groupName);
+                    const soc=socketsMap.get(app.username);
+                    interpetMsg(JSON.stringify(sen.offScenario),user,userSocket,false);
+                });
+            }
+            break;
+
         default:
             return userSocket.emit('send message to user',user.username,{messageType:parseErorr,content:"no message with this type"});
 

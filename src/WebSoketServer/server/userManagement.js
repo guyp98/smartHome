@@ -10,6 +10,10 @@ const usersMap=new Map(); //username => User
 const parseUserAndPassword=(msg)=>{//connverts user messege to user name and password as object
     return JSON.parse(msg);
 }
+
+const isUserExist=(username)=>usersMap.has(username);
+
+
 const addUser=(userName,password,type)=>{//register new user
     try{
         if(usersMap.has(userName)){
@@ -64,56 +68,42 @@ const isConnected=(userName)=>{
     }
 }
 
-const addDataToUser=(username,dataArray)=>{
+const editApplianceDetails=(username,details)=>{
     userObj=usersMap.get(username);
-    var toAdd=[];
-    dataArray.forEach(newItem => {//item [{id:"1",detail:""},....]
-        var found=false;
-        userObj.userData.forEach(oldItem=>{
-            if(newItem.id==oldItem.Id&&!found){
-                oldItem.details=newItem.details;
-                found=true;
-            }
-        });
-        if(!found){
-            toAdd.push(newItem);
-        }
-        userObj.userData.concat(toAdd);
-    });
+    const item=userObj.userData.find(item=>{item.username==SentUsername});
+    if(undefined!=item){
+        item.details=details
+        return result.makeOk("detailes edited");
+    }
+    else{
+        return result.makeFailure("no details with this username");
+    }
 }
 const addApplianceToUser=(username,detailes,SentUsername/*aka appliance*/ )=>{
     try{
         userObj=usersMap.get(username);
-        
-        //create new id for detailes
-        var maxId=-1;
-        if(userObj.userData.length!=0){
-            userObj.userData.forEach(oldItem=>{
-                if(maxId<oldItem.id){
-                    maxId=oldItem.id;
-                }
-            }); 
+        if(undefined!=userObj.userData.find(item=>{item.username==SentUsername})){
+            throw 'username already exist';
         }
-        else{maxId=0;}
         //add the data to user
-        userObj.userData.push({id:maxId+1,username:SentUsername,detail:detailes});
-        return result.makeOk([maxId+1,"data added succesfuley"]); 
+        userObj.userData.push({username:SentUsername,detail:detailes});
+        return result.makeOk([SentUsername,"data added succesfuley"]); 
     }
     catch(err){
-        return result.makeFailure([-1,err]);
+        return result.makeFailure([SentUsername,err]);
     }
 }
-const removeApplianceToUser=(username,id)=>{
+const removeApplianceToUser=(username,toRemove)=>{
     try{
         userObj=usersMap.get(username);
         
         for(var i=0;i<userObj.userData.length;i++){
-            if(id==userObj.userData[i].id){
+            if(toRemove==userObj.userData[i].username){
                 userObj.userData.splice(i,1);
-                return result.makeOk([maxId+1,"data removed "]);
+                return result.makeOk([toRemove,"data removed "]);
             }
         }
-        return result.makeFailure("cant remove data (id probably wrong)");
+        return result.makeFailure("cant remove data ("+toRemove+" probably wrong)");
     }
     catch(err){
         return result.makeFailure(err);
@@ -144,10 +134,19 @@ const retrunAllAppliances=(ret)=>{
     var tempapp=iterator.next();
     while(!tempapp.done){
         if(ret==='type'){
-            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({username:tempapp.value.username,type:tempapp.value.role.type});
+            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({
+                username:tempapp.value.username,
+                type:tempapp.value.role.type
+            });
         }
         else if(ret==='state'){
-            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({username:tempapp.value.username,state:tempapp.value.role.power});
+            (tempapp.value.role.type!="user"&&tempapp.value.role.type!="admin")&&appli.push({
+                username:tempapp.value.username,
+                state:tempapp.value.role.power,
+                groups:Array.from(tempapp.value.role.groups).map(group=>{
+                    return {name:group[0],scenarioOn:group[1],scenerioOff:group[2]}
+                })
+            });
         }
         tempapp=iterator.next();
     }
@@ -180,7 +179,7 @@ const getPowerState=(username)=>{
         return result.makeFailure("user or adimin not have power state"); 
     }
     else{
-        console.log(user.role.power);
+        //console.log(user.role.power);
         return result.makeOk(user.role.power);
     }
 }
@@ -188,7 +187,8 @@ const getPowerState=(username)=>{
 
 module.exports={isRole,getUserData,canAccess,
     parseUserAndPassword,addUser,authenticate,tryConnectUser,removeApplianceToUser,disconnect,
-    isConnected,addApplianceToUser,setPowerState,isFunExist,retrunAllAppliances, getPowerState
+    isConnected,addApplianceToUser,editApplianceDetails,setPowerState,isFunExist,retrunAllAppliances, getPowerState
+    ,isUserExist,usersMap
 };
 
 addUser("guy","porat","user");

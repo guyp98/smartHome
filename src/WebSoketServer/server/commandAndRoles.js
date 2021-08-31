@@ -11,7 +11,9 @@ const removeAppliance="removeAppliance";//{messageType:":",id:"" }
 const getAllAppliances="getAllAppliances";//{messageType:"" }
 const flipTheSwitch="flipTheSwitch";//{messageType:"",sendToUsername:"",msg:true/false}
 const statusToServer="statusResponse";//{messageType:"",status:"on"/"off"}
-const all=[tryToConnect,statusToServer,echo,usersComunnication,register,giveUserData,addAppliance,removeAppliance,getAllAppliances,flipTheSwitch];//all- can use all functions
+const editAppliance="editAppliance"//{messageType:"",username:"",details:}
+const group="group"//{"messageType":"","groupName":"","names":[{username:"____",onScenario:Json Format from app to server command String },,..],action:"newGroup/newItem/remove/removeAll/groupScenarioOn/groupScenarioOff}
+const all=[group,tryToConnect,editAppliance,statusToServer,echo,usersComunnication,register,giveUserData,addAppliance,removeAppliance,getAllAppliances,flipTheSwitch];//all- can use all functions
 
 class role{//all the user permissions
     constructor(type){
@@ -19,14 +21,16 @@ class role{//all the user permissions
             case "smartSwitch":
                 this.permissions=[tryToConnect,usersComunnication,register,statusToServer];
                 this.power=false;//false=off,true=on
+                this.groups=new Map();//groupName==>{scenarioOn:__offScenario:__}
                 break;
             case "smartSensor":
                 this.permissions=[tryToConnect,usersComunnication,register,statusToServer];
                 this.power=false;
+                this.groups=new Map();//groupName==>{scenarioOn:__offScenario:__}
                 break;
             case "user":
-                this.permissions=[tryToConnect,usersComunnication,echo,register,
-                    giveUserData,addAppliance,removeAppliance,getAllAppliances,flipTheSwitch];
+                this.permissions=[group,tryToConnect,usersComunnication,echo,register,
+                    giveUserData,addAppliance,removeAppliance,getAllAppliances,flipTheSwitch,editAppliance];
                 break;
             case "admin":
                 this.permissions=all;
@@ -50,5 +54,6 @@ class User{
 
 
 
-module.exports={User,role,tryToConnect,echo,statusToServer, usersComunnication,register,flipTheSwitch,giveUserData,addAppliance,removeAppliance,getAllAppliances,all
+module.exports={User,role,tryToConnect,echo,editAppliance,statusToServer, usersComunnication,register,
+    flipTheSwitch,giveUserData,addAppliance,removeAppliance,getAllAppliances,group,all
 };

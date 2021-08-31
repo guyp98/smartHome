@@ -1,10 +1,14 @@
 #include <ArduinoWebsockets.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
-
+int gpio=LED_BUILTIN;
 const char* ssid = "BEZEQINT-A09A-2.4G"; //Enter SSID
 const char* password = "SSgdaA0584442626"; //Enter Password
-const char* websockets_server = "ws://192.168.14.101:5001"; //server adress and port
+const char* websockets_server = "ws://192.168.14.160:5001"; //server adress and port
+//const char* websockets_server ="ws://cthulhuserver.duckdns.org:5001";
+//const char* password ="guy123123";
+//const char* ssid ="ONEPLUS8t-guy";
+
 const char* Username="1234";
 const char* Password="1234";
 const char* Type="smartSwitch";
@@ -36,7 +40,7 @@ void onEventsCallback(WebsocketsEvent event, String data) {
 
 void setup() {
     Serial.begin(115200);
-    pinMode(LED_BUILTIN, OUTPUT);
+    pinMode(gpio, OUTPUT);
     WiFi.begin(ssid, password);
     while(WiFi.status() != WL_CONNECTED){
         Serial.print(".");
@@ -45,12 +49,12 @@ void setup() {
     client.onMessage(onMessageCallback);
     client.onEvent(onEventsCallback);
     client.connect(websockets_server);
-    client.ping();
+    //client.ping();
     client.send(registerToServer(Username,Password,Type));
     client.poll();
     client.send(loginToServer(Username,Password));
     client.poll();
-    digitalWrite(LED_BUILTIN, LOW);
+    digitalWrite(gpio, LOW);
     client.send(statusToServer("on"));
 }
 
@@ -99,9 +103,12 @@ String inputCommand(String json){
   deserializeJson(doc, json);
   if(doc["messageType"]=="usersCommunication"){
     String command= doc["message"];
-    //lastSender= doc["from"];
-    if(command=="on"){Serial.print("flip switch on");digitalWrite(LED_BUILTIN, LOW);}
-    else if("off"){Serial.print("flip switch off");digitalWrite(LED_BUILTIN, HIGH);}
+    String temp= doc["from"];
+    Serial.print(command+"\n");
+    Serial.print(temp+"\n");
+    lastSender=temp;
+    if(command=="on"){Serial.print("flip switch on");digitalWrite(gpio, LOW);}
+    else if(command=="off"){Serial.print("flip switch off");digitalWrite(gpio, HIGH);}
     if(command!=""){
       client.send(statusToServer(command));
       return "fail";

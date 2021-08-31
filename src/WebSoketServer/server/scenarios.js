@@ -1,0 +1,130 @@
+const { User,role,tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,all } = require("./commandAndRoles");
+const result = require("./result");
+const { usersMap, isUserExist }=require('./userManagement');
+const { addMsgToPrint } = require('./serverLogs');
+
+var groupsNames=[];
+//const groupsMap=new Map(); //groupName => senerio  |||| scenerio=[{username:"____",onScenario:one off the commands in "commansAndRoles.js"},....] 
+const actionSwitch=(action,groupName,names)=>
+    action=="newGroup"?addNewgroup(groupName,names):
+    action=="newItem"?addItemsTogroup(groupName,names):
+    action=="remove"? removeItemsFromGroup(groupName,names)  :
+    action=="removeAll"?   removeAllItemsFromGroup(groupName):
+    action=="EditGroup"? EditItemsGroup(groupName,names)  :
+    action=="groupScenarioOn"?  groupScenario(groupName) :
+    action=="groupScenarioOff"&&   groupScenario(groupName);
+
+
+const checkAndDoFun=(groupName,names,fun)=>{
+        var usernameNotExisting=[];
+        var scenarioNotExisting=[];
+        names.forEach((item)=>{
+            isUserExist(item.username)?(  all.includes(item.onScenario.messageType)&&all.includes(item.offScenario.messageType)? fun(item,groupName):
+            scenarioNotExisting=scenarioNotExisting.concat([item.username]) 
+                ):
+                usernameNotExisting=usernameNotExisting.concat([item.username]);
+        });
+        if(usernameNotExisting.length==0&&scenarioNotExisting.length==0){
+            return result.makeOk({erorrUsers:[],comment:"Senerios added"});
+        }
+        addMsgToPrint("usernames ["+usernameNotExisting+"] does not exist\n and users ["+ scenarioNotExisting+"] onScenario not valid")
+        return result.makeFailure({erorrUsers:usernameNotExisting,comment:"usernames "+usernameNotExisting+" does not exist\n and users"+ scenarioNotExisting+" onScenario not valid"})
+} 
+const addGroupToUser=(item,groupName)=>{
+    var userObj=usersMap.get(item.username);
+    if(userObj!=undefined){
+        if(userObj.role.type!="user"&&userObj.role.type!="admin"){
+            !userObj.role.groups.has(groupName)&&userObj.role.groups.set(groupName,{onScenario:item.onScenario,offScenario:item.offScenario});
+        }
+    }
+}
+const removeGroupToUser=(item,groupName)=>{
+    var userObj=usersMap.get(item.username);
+    if(userObj!=undefined){
+        if(userObj.role.type!="user"&&userObj.role.type!="admin"){
+            userObj.role.groups.has(groupName)&&userObj.role.groups.delete(groupName);
+        }
+    }
+}
+
+
+const addNewgroup=(groupName,names)=>{//newgroup
+    if(!groupsNames.includes(groupName)){
+        groupsNames=groupsNames.concat([groupName]);
+        return checkAndDoFun(groupName,names,addGroupToUser);
+    }
+    else{
+        return result.makeFailure({erorrUsers:names.map(x=>x.username),comment:"groupName aready exist"});
+    }
+}
+
+
+
+const addItemsTogroup=(groupName,names)=>{
+    if(groupsNames.includes(groupName)){
+        return checkAndDoFun(groupName,names,addGroupToUser);
+    }
+    else{
+        return result.makeFailure({erorrUsers:names.map(x=>x.username),comment:"groupName not exist"});
+    }
+}
+
+const removeItemsFromGroup=(groupName,names)=>{
+    if(groupsNames.includes(groupName)){
+        
+        var usernameNotExisting=[];
+        names.forEach((item)=>{
+            isUserExist(item.username)?removeGroupToUser(item,groupName):
+            usernameNotExisting=usernameNotExisting.concat([item.username]);
+        });
+        if(!isGroupExist(groupName)){
+            const index = groupsNames.indexOf(groupName);
+            if (index > -1) {
+                groupsNames.splice(index, 1);
+            }
+        }
+        if(usernameNotExisting.length==0){
+            return result.makeOk({erorrUsers:[],comment:"Senerios deleted"});
+        }
+        addMsgToPrint("usernames "+usernameNotExisting+" does not exist");
+        return result.makeFailure({erorrUsers:usernameNotExisting,comment:"usernames "+usernameNotExisting+" does not exist"});
+        
+    }
+    else{
+        return result.makeFailure("groupName not exist");
+    }
+}
+const removeAllItemsFromGroup=(groupName)=>{
+    var arr = Array.from(usersMap.values());
+    return removeItemsFromGroup(groupName,arr);
+}
+const EditItemsGroup=(groupName,names)=>{
+    removeItemsFromGroup(groupName,names);
+    return isGroupExist(groupName)?addItemsTogroup(groupName,names):addNewgroup(groupName,names);
+}
+
+const groupScenario=(groupName)=>{//retrun all users that part of the group
+    var allUsers = Array.from(usersMap.values());
+    return allUsers.filter(user=>{
+        if(user.role.type!="user"&&user.role.type!="admin"){
+            return Array.from(user.role.groups.keys()).find(group=>group==groupName)!=undefined;
+        }
+        else{return false;}
+    })
+}
+
+
+const isGroupExist=(groupName)=>{
+    const iterator=usersMap.values();
+    var user=iterator.next();
+    while(!user.done){
+        if(user.value.role.type!="user"&&user.value.role.type!="admin"){
+            if(user.value.role.groups.has(groupName)){
+                return true;
+            }
+        }
+        user=iterator.next();
+    }
+    return false;
+}
+module.exports={actionSwitch};
