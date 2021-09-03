@@ -3,6 +3,7 @@
 
 const { User,role,tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,all } = require("./commandAndRoles");
 const result = require("./result");
+const {saveUserObj, editUserData}= require("./SaveData");
 
 
 const usersMap=new Map(); //username => User
@@ -21,6 +22,7 @@ const addUser=(userName,password,type)=>{//register new user
         }
         userObj=new User(userName,password,type);
         usersMap.set(userName,userObj);
+        saveUserObj(userObj);
         return result.makeOk("register successful");
     }
     catch(msg){
@@ -73,6 +75,7 @@ const editApplianceDetails=(username,details)=>{
     const item=userObj.userData.find(item=>{item.username==SentUsername});
     if(undefined!=item){
         item.details=details
+        editUserData(username,userObj.userData)
         return result.makeOk("detailes edited");
     }
     else{
@@ -82,11 +85,12 @@ const editApplianceDetails=(username,details)=>{
 const addApplianceToUser=(username,detailes,SentUsername/*aka appliance*/ )=>{
     try{
         userObj=usersMap.get(username);
-        if(undefined!=userObj.userData.find(item=>{item.username==SentUsername})){
+        if(undefined!=userObj.userData.find(item=>{return item.username==SentUsername})){
             throw 'username already exist';
         }
         //add the data to user
         userObj.userData.push({username:SentUsername,detail:detailes});
+        editUserData(username,userObj.userData);
         return result.makeOk([SentUsername,"data added succesfuley"]); 
     }
     catch(err){
@@ -100,6 +104,7 @@ const removeApplianceToUser=(username,toRemove)=>{
         for(var i=0;i<userObj.userData.length;i++){
             if(toRemove==userObj.userData[i].username){
                 userObj.userData.splice(i,1);
+                editUserData(username,userObj.userData);
                 return result.makeOk([toRemove,"data removed "]);
             }
         }
@@ -144,7 +149,7 @@ const retrunAllAppliances=(ret)=>{
                 username:tempapp.value.username,
                 state:tempapp.value.role.power,
                 groups:Array.from(tempapp.value.role.groups).map(group=>{
-                    return {name:group[0],scenarioOn:group[1],scenerioOff:group[2]}
+                    return {name:group[0],scenarioOn:group[1].onScenario,scenarioOff:group[1].scenarioOff}
                 })
             });
         }
@@ -191,6 +196,6 @@ module.exports={isRole,getUserData,canAccess,
     ,isUserExist,usersMap
 };
 
-addUser("guy","porat","user");
-addUser("guy2","porat2","user");
+//addUser("guy","porat","user");
+//addUser("guy2","porat2","user");
 

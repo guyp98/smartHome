@@ -2,6 +2,7 @@ const { User,role,tryToConnect,echo, usersComunnication,register,giveUserData,ad
 const result = require("./result");
 const { usersMap, isUserExist }=require('./userManagement');
 const { addMsgToPrint } = require('./serverLogs');
+const { addToGroups, deleteFromGroups, editUserScenarios }= require("./SaveData");
 
 var groupsNames=[];
 //const groupsMap=new Map(); //groupName => senerio  |||| scenerio=[{username:"____",onScenario:one off the commands in "commansAndRoles.js"},....] 
@@ -10,10 +11,10 @@ const actionSwitch=(action,groupName,names)=>
     action=="newItem"?addItemsTogroup(groupName,names):
     action=="remove"? removeItemsFromGroup(groupName,names)  :
     action=="removeAll"?   removeAllItemsFromGroup(groupName):
-    action=="EditGroup"? EditItemsGroup(groupName,names)  :
+    action=="editGroup"? EditItemsGroup(groupName,names)  :
     action=="groupScenarioOn"?  groupScenario(groupName) :
-    action=="groupScenarioOff"&&   groupScenario(groupName);
-
+    action=="groupScenarioOff"?   groupScenario(groupName):
+    result.makeFailure("no action with this name");
 
 const checkAndDoFun=(groupName,names,fun)=>{
         var usernameNotExisting=[];
@@ -25,24 +26,26 @@ const checkAndDoFun=(groupName,names,fun)=>{
                 usernameNotExisting=usernameNotExisting.concat([item.username]);
         });
         if(usernameNotExisting.length==0&&scenarioNotExisting.length==0){
-            return result.makeOk({erorrUsers:[],comment:"Senerios added"});
+            return result.makeOk({erorrUsers:/*potential erorr*/[],comment:"Senerios added"});
         }
         addMsgToPrint("usernames ["+usernameNotExisting+"] does not exist\n and users ["+ scenarioNotExisting+"] onScenario not valid")
-        return result.makeFailure({erorrUsers:usernameNotExisting,comment:"usernames "+usernameNotExisting+" does not exist\n and users"+ scenarioNotExisting+" onScenario not valid"})
+        return result.makeFailure({erorrUsers:usernameNotExisting,comment:"usernames: "+usernameNotExisting+" does not exist\n and users"+ scenarioNotExisting+" onScenario not valid"})
 } 
 const addGroupToUser=(item,groupName)=>{
     var userObj=usersMap.get(item.username);
-    if(userObj!=undefined){
-        if(userObj.role.type!="user"&&userObj.role.type!="admin"){
-            !userObj.role.groups.has(groupName)&&userObj.role.groups.set(groupName,{onScenario:item.onScenario,offScenario:item.offScenario});
+    if(userObj!=undefined&&(userObj.role.type!="user"&&userObj.role.type!="admin")){
+        if(!userObj.role.groups.has(groupName)){
+            userObj.role.groups.set(groupName,{onScenario:item.onScenario,scenarioOff:item.offScenario});
+            editUserScenarios(userObj);
         }
     }
 }
 const removeGroupToUser=(item,groupName)=>{
     var userObj=usersMap.get(item.username);
-    if(userObj!=undefined){
-        if(userObj.role.type!="user"&&userObj.role.type!="admin"){
-            userObj.role.groups.has(groupName)&&userObj.role.groups.delete(groupName);
+    if(userObj!=undefined&&(userObj.role.type!="user"&&userObj.role.type!="admin")){
+        if(userObj.role.groups.has(groupName)){
+            userObj.role.groups.delete(groupName);
+            deleteFromGroups(groupName);
         }
     }
 }
@@ -50,8 +53,19 @@ const removeGroupToUser=(item,groupName)=>{
 
 const addNewgroup=(groupName,names)=>{//newgroup
     if(!groupsNames.includes(groupName)){
-        groupsNames=groupsNames.concat([groupName]);
-        return checkAndDoFun(groupName,names,addGroupToUser);
+        var ret=checkAndDoFun(groupName,names,addGroupToUser);
+        if(result.isOk(ret)){
+            groupsNames=groupsNames.concat([groupName]);
+            addToGroups(groupName);
+        }
+        else{
+            if(res.msg.erorrUsers.length<names.length){
+                groupsNames=groupsNames.concat([groupName]);
+                addToGroups(groupName);
+            }
+        }
+        //groupsNames=groupsNames.concat([groupName]);//flip
+        return ret;
     }
     else{
         return result.makeFailure({erorrUsers:names.map(x=>x.username),comment:"groupName aready exist"});
@@ -81,6 +95,7 @@ const removeItemsFromGroup=(groupName,names)=>{
             const index = groupsNames.indexOf(groupName);
             if (index > -1) {
                 groupsNames.splice(index, 1);
+                deleteFromGroups(groupName);
             }
         }
         if(usernameNotExisting.length==0){

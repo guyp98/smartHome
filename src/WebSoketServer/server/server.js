@@ -8,6 +8,7 @@ const { tryToConnect,echo,statusToServer,flipTheSwitch, usersComunnication,regis
     ,addAppliance,editAppliance,removeAppliance,getAllAppliances, group } = require('./commandAndRoles');
 const { actionSwitch }=require("./scenarios");
 
+
 const PORT = 5001;
 const wsServer = new WebSocket.Server({port: PORT});
 const socketsMap=new Map();//username==>socket
@@ -175,7 +176,7 @@ function handleMsg(inputObj,user,userSocket,respond=true){
                 res.forEach(app=>{
                     const sen=app.role.groups.get(inputObj.groupName);
                     const soc=socketsMap.get(app.username);
-                    interpetMsg(JSON.stringify(sen.offScenario),user,userSocket,false);
+                    interpetMsg(JSON.stringify(sen.scenarioOff),user,userSocket,false);
                 });
             }
             break;

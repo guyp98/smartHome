@@ -24,12 +24,25 @@ void onMessageCallback(WebsocketsMessage message) {
     inputCommand(message.data());
     
 }
-
+void setupCon(){
+  WiFi.begin(ssid, password);
+    while(WiFi.status() != WL_CONNECTED){
+        Serial.print(".");
+        delay(1000);
+    }
+    client.onMessage(onMessageCallback);
+    client.onEvent(onEventsCallback);
+    while(!client.connect(websockets_server)){
+      }
+    
+    client.send(loginToServer(Username,Password));
+  }
 void onEventsCallback(WebsocketsEvent event, String data) {
     if(event == WebsocketsEvent::ConnectionOpened) {
         Serial.println("Connnection Opened");
     } else if(event == WebsocketsEvent::ConnectionClosed) {
         Serial.println("Connnection Closed");
+        setupCon();
     } else if(event == WebsocketsEvent::GotPing) {
         Serial.println("Got a Ping!");
     } else if(event == WebsocketsEvent::GotPong) {
