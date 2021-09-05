@@ -1,0 +1,23 @@
+{
+  "name": "server2",
+  "version": "1.0.0",
+  "type": "commonjs",
+  "description": "test",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^2.30.3",
+    "prompt": "^1.1.0",
+    "prompt-sync": "^4.2.0",
+    "ws": "^7.5.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12",
+    "prisma": "^2.30.3"
+  }
+}
