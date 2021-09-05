@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -101,10 +102,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                 if(echo)
                     ws.send(jsonLogin.toString());
                 else {
-                    String jsonLoginStr2;
-                    jsonLoginStr2 = "{messageType:itemsDataInitialiseResponse ,appliances: [], predicament:[], success:true }";
-                    JSONObject jsonLogin2 = new JSONObject(jsonLoginStr2);
-                    LoginPage.store=jsonLogin2.toString();
+
 
                     Intent itemsAct = new Intent(LoginPage.this, Items.class);
                     startActivity(itemsAct);
@@ -164,7 +162,9 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                     if(type.equals( "loginResponse"))
                     {
                         if (jsonObject.getString("loggedIn").equals("true")) {
-                            loadingPage.startLoadingDialog();
+
+
+
 
                             String jsonLoginStr;
                             if (LoginPage.testing)
@@ -188,7 +188,6 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                     else if(type.equals("itemsDataInitialiseResponse")){
 
                         Intent itemsAct = new Intent(LoginPage.this, Items.class);
-                        loadingPage.dismissDialog();
                         startActivity(itemsAct);
 
                     }
