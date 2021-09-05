@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.realproject">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.RealProject"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".Combos.ComboEdit"></activity>
+        <activity android:name=".Combos.ComboAddPage" />
+        <activity android:name=".Combos.ComboInfo" />
+        <activity android:name=".Combos.ComboPage" />
+        <activity android:name=".Items.EditItem" />
+        <activity android:name=".Items.ItemInfo" />
+        <activity android:name=".Login.RegisterScreen" />
+        <activity android:name=".MainMenu" />
+        <activity android:name=".Items.AddScreen" />
+        <activity android:name=".Items.Items" />
+        <activity android:name=".Login.LoginPage">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>
