@@ -23,7 +23,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class ComboAddPage extends AppCompatActivity {
+public class  ComboAddPage extends AppCompatActivity {
 
     private TextInputLayout groupNameTil;
 
@@ -33,6 +33,8 @@ public class ComboAddPage extends AppCompatActivity {
     private ListView applianceListview;
     private ComboAddAdapter programAdapter;
     private ArrayList<Boolean> isChecked;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,7 +69,6 @@ public class ComboAddPage extends AppCompatActivity {
         }
 
         ArrayAdapter arScenarioOn = new ArrayAdapter(this, R.layout.layout_dropdown_add,  ComboPage.options.toArray());
-
         programAdapter = new ComboAddAdapter(this, Items.area,Items.progImag, isChecked,arScenarioOn,null);
         applianceListview.setAdapter(programAdapter);
     }
@@ -152,7 +153,7 @@ public class ComboAddPage extends AppCompatActivity {
                     String scenarioOff = item.getScenarioOff();
 
 
-                    jsonComboItem = "{username:" + us + ", onScenario :" + scenarioOn + ", offScenario: " + scenarioOff +"}";
+                    jsonComboItem = "{username:\"" + us + "\", onScenario :" + scenarioOn + ", offScenario: " + scenarioOff +"}";
                     JSONObject jsonCombo = new JSONObject(jsonComboItem);
 
                     jsonComboArray.put(jsonCombo);

@@ -54,9 +54,9 @@ public class ComboArrayAdapter  extends ArrayAdapter<String> {
                 //todo add username
                 String switchChanged;
                 JSONObject jsonSend = new JSONObject();
-                    if (LoginPage.testing){
+                    if (LoginPage.echo){
                         jsonSend.put("messageType","group");
-                        jsonSend.put("groupName", finalHolder.title.getText());
+                        jsonSend.put("groupName", finalHolder.title.getText().toString());
                         if(isChecked)
                             jsonSend.put("action","groupScenarioOn");
                         else
@@ -64,6 +64,8 @@ public class ComboArrayAdapter  extends ArrayAdapter<String> {
                         jsonSend.put("messageType","group");
 
                     }
+
+
                     else {
                         jsonSend.put("messageType", "groupResponse");
                         jsonSend.put("success","true");

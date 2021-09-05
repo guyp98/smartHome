@@ -36,7 +36,7 @@ public class ComboEdit extends AppCompatActivity {
     private String name;
 
     @Override
-
+    //todo add to appliance list all items that are already checked
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_combo_edit);
@@ -72,13 +72,7 @@ public class ComboEdit extends AppCompatActivity {
         groupNameTil.getEditText().setText(name);
 
 
-       for (int i = 0; i < programAdapter.getCount(); i++) {
-            Spinner d = programAdapter.getView(i,null,applianceListview).findViewById(R.id.spinner_scenario);
-            TextView dview = programAdapter.getView(i,null,applianceListview).findViewById(R.id.textView_title_group);
-            dview.setText("I win");
-           //applianceListview.getChildAt(i).findViewById(R.id.spinner_scenario);
-           d.setSelection(2);
-        }
+
 
 
 
@@ -109,6 +103,7 @@ public class ComboEdit extends AppCompatActivity {
                                 JSONObject jsonObject = new JSONObject(LoginPage.store);
                                 String boo = jsonObject.getString("success");
                                 if (boo.equals("true")) {
+                                    Items.title.remove(name);
                                     Items.title.add(groupName);
                                     Items.groups.put(groupName, ComboPage.checkedAppliances);
                                     finish();
@@ -129,18 +124,20 @@ public class ComboEdit extends AppCompatActivity {
             itemsActThread.start();
 
         }
-        if (view.getId() == save.getId()) {
+        else if (view.getId() == delete.getId()) {
+            String groupName = groupNameTil.getEditText().getText().toString();
             try {
+
                 JSONObject deleteJson = new JSONObject();
                 if(LoginPage.testing){
 
                     deleteJson.put("messageType", "groupResponse");
                     deleteJson.put("success","true");
-                    deleteJson.put("action","deleteGroup");
+                    deleteJson.put("action","removeAll");
                 }else {
                     deleteJson.put("messageType", "group");
                     deleteJson.put("groupName", groupNameTil.getEditText().getText().toString());
-                    deleteJson.put("action", "deleteGroup");
+                    deleteJson.put("action", "removeAll");
                 }
                 LoginPage.store="";
 
@@ -148,6 +145,44 @@ public class ComboEdit extends AppCompatActivity {
                     LoginPage.ws.send(deleteJson.toString());
                 else
                     LoginPage.store=deleteJson.toString();
+
+                checkIfResponse = new Runnable() {
+                    @Override
+                    public void run() {
+
+                        started = false;
+                        for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
+
+                            try {
+                                Thread.sleep(LoginPage.threadSleep);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            if (!LoginPage.store.isEmpty()) {
+                                started = true;
+                                try {
+                                    JSONObject jsonObject = new JSONObject(LoginPage.store);
+                                    String boo = jsonObject.getString("success");
+                                    if (boo.equals("true")) {
+                                        Items.groups.remove(groupName);
+                                        Items.title.remove(groupName);
+                                        ComboPage.finishBool=true;
+                                        finish();
+                                    } else {
+                                        finish();
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                        finish();
+                    }
+
+
+                };
+                Thread itemsActThread = new Thread(checkIfResponse);
+                itemsActThread.start();
 
 
 
@@ -178,17 +213,17 @@ public class ComboEdit extends AppCompatActivity {
                 String scenarioOn = item.getScenarioOn();
                 String scenarioOff = item.getScenarioOff();
 
-                jsonComboItem = "{username:" + us + ", onScenario :" + scenarioOn + ", offScenario: " + scenarioOff +"}";
+                jsonComboItem = "{username:\"" + us + "\", onScenario :" + scenarioOn + ", offScenario: " + scenarioOff +"}";
                 JSONObject jsonCombo = new JSONObject(jsonComboItem);
                 jsonComboArray.put(jsonCombo);
 
             }
 
             JSONObject toSend =new JSONObject();
-            toSend.put("messageType","editGroup");
+            toSend.put("messageType","group");
             toSend.put("groupName",name);
             toSend.put("names",jsonComboArray);
-            toSend.put("action","newGroup");
+            toSend.put("action","editGroup");
 
 
             if(LoginPage.testing)

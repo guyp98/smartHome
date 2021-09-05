@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.realproject">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,7 +21,6 @@
         <activity android:name=".Items.EditItem" />
         <activity android:name=".Items.ItemInfo" />
         <activity android:name=".Login.RegisterScreen" />
-        <activity android:name=".PopUp.LoadingPage" />
         <activity android:name=".MainMenu" />
         <activity android:name=".Items.AddScreen" />
         <activity android:name=".Items.Items" />

@@ -28,6 +28,9 @@ public class ComboPage extends AppCompatActivity {
     public static ArrayList<String> options;
     public static ArrayList<ComboItem> checkedAppliances;
     public static ArrayList<Integer> checkedApplianceInt;
+    public static Boolean finishBool = false;
+
+
 
 
     @Override
@@ -94,6 +97,7 @@ public class ComboPage extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         title.clear();
         isChecked.clear();
         for (String groupName: Items.title)

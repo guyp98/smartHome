@@ -45,6 +45,15 @@ public class ComboInfo extends AppCompatActivity {
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if(ComboPage.finishBool){
+            ComboPage.finishBool=false;
+            finish();
+        }
+    }
 
     public void onClickInfoCombo(View view) {
         if (view.getId() == comboBack.getId()) {

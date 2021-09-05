@@ -30,7 +30,7 @@ public class ComboAddAdapter extends ArrayAdapter<String> {
     ArrayList<Integer> images;
     ArrayList<String> progName, programDesc;
     ArrayList<Boolean> programSwitch;
-    private int loadedIndex = 0;
+    private int check = 0;
     private Activity itemsActivity;
     private boolean started = false;
     private Runnable checkIfResponse;
@@ -68,41 +68,47 @@ public class ComboAddAdapter extends ArrayAdapter<String> {
         ComboAddHolder finalHolder2 = holder;
         holder.dropDownScenarioOn.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 //((TextView) parent.getChildAt(0)).setTextColor(Color.BLUE);
-                ((TextView) parent.getChildAt(0)).setTextSize(18);
-                String jsonMessage="",jsonMessage2="";
-                if(ComboPage.checkedApplianceInt.contains(position)) {
-                    for (ComboItem appliance: ComboPage.checkedAppliances){
+                check++;
+                if (check > progName.size()) {
+                    ((TextView) parent.getChildAt(0)).setTextSize(18);
+                    String jsonMessage = "", jsonMessage2 = "";
+                    //we want to replace the appliance, so if it exist we will delete the former and add a new one
+                    if (ComboPage.checkedApplianceInt.contains(position)) {
+                        for (ComboItem appliance : ComboPage.checkedAppliances) {
+                            String a = appliance.getUsername();
+                            String b = Items.username.get(position);
+                            if (a.equals(b)) {
+                                ComboPage.checkedAppliances.remove(appliance);
+                                break;
+                            }
 
-                        if(appliance.getUsername() == Items.username.get(position))
-                        {
-                            ComboPage.checkedAppliances.remove(appliance);
                         }
-                        break;
-                    }
 
-                    if (finalHolder2.dropDownScenarioOn.getSelectedItem().toString().equals("On")) {
-                        jsonMessage = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:true}";
-                        jsonMessage2 = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:false}";
 
-                    } else {
-                        jsonMessage = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:false}";
-                        jsonMessage2 = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:true}";
+                        if (finalHolder2.dropDownScenarioOn.getSelectedItem().toString().equals("On")) {
+                            jsonMessage = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:true}";
+                            jsonMessage2 = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:false}";
 
-                    }
-                    try {
-                        JSONObject jsonFlip = new JSONObject(jsonMessage);
-                        JSONObject jsonFlip2 = new JSONObject(jsonMessage2);
+                        } else {
+                            jsonMessage = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:false}";
+                            jsonMessage2 = "{messageType:flipTheSwitch, sendToUsername:\"" + Items.username.get(position) + "\",  msg:true}";
 
-                        ComboPage.checkedAppliances.add(new ComboItem(Items.username.get(position), jsonFlip.toString(), jsonFlip2.toString()));
+                        }
+                        try {
+                            JSONObject jsonFlip = new JSONObject(jsonMessage);
+                            JSONObject jsonFlip2 = new JSONObject(jsonMessage2);
 
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                            ComboPage.checkedAppliances.add(new ComboItem(Items.username.get(position), jsonFlip.toString(), jsonFlip2.toString()));
+
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
-            }
 
+            }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 return;
@@ -113,7 +119,7 @@ public class ComboAddAdapter extends ArrayAdapter<String> {
         try {
         if(groupName!=null) {
             for(ComboItem cm : Items.groups.get(groupName)) {
-                ;
+
                 String d = holder.title.getText().toString();
                 String g = Items.getAreaFromUsername(cm.getUsername());
                 if (Items.getAreaFromUsername(cm.getUsername()).equals(holder.title.getText().toString()))

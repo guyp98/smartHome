@@ -124,16 +124,15 @@ public class Items extends AppCompatActivity {
                     JSONArray jsonGroups = switchSingle.getJSONArray("groups");
 
                     for (int j = 0; j < jsonGroups.length(); j++) {
-                        JSONObject gSingle = jsonGroups.getJSONObject(i);
+                        JSONObject gSingle = jsonGroups.getJSONObject(j);
                         String groupTemp = gSingle.getString("name");
                         if(!groups.containsKey(groupTemp)){
                             groups.put(groupTemp,new ArrayList<>());
                             title.add(groupTemp);
                         }
-                        groups.get(groupTemp).add(new ComboItem(usernameTemp,gSingle.getString("scenerioOn"),gSingle.getString("scenerioOff")));
+                        groups.get(groupTemp).add(new ComboItem(usernameTemp,gSingle.getString("scenarioOn"),gSingle.getString("scenarioOff")));
                     }
 
-                    ComboItem itemC = new ComboItem(usernameTemp,switchSingle.getString("scenerioOn"),switchSingle.getString("scenerioOff"));
 
                 }
 
@@ -351,7 +350,7 @@ public class Items extends AppCompatActivity {
         } else if (view.getId() == R.id.buttonCombos) {
             ArrayList<ComboItem> usernameExample = new ArrayList<>();
             usernameExample.add(new ComboItem("0xBB23D1", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xBB23D1" + "\",  msg:true}","{messageType:flipTheSwitch, sendToUsername:\"" + "0xBB23D1" + "\",  msg:false}"));
-            usernameExample.add(new ComboItem("0xD2FF3D", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xD2FF3D" + "\",  msg:true}", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xBB23D1" + "\",  msg:false}"));
+            usernameExample.add(new ComboItem("0xD2FF3D", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xD2FF3D" + "\",  msg:true}", "{messageType:flipTheSwitch, sendToUsername:\"" + "0xD2FF3D" + "\",  msg:false}"));
             if (!groups.containsKey("dan"))
                 addGroup("dan",usernameExample);
 

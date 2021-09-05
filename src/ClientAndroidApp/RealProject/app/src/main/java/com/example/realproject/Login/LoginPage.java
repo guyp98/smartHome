@@ -9,7 +9,9 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.realproject.Items.Items;
 import com.example.realproject.MainMenu;
+import com.example.realproject.PopUp.LoadingPage;
 import com.example.realproject.R;
 import com.example.realproject.WebSocketRecieve;
 import com.google.android.material.textfield.TextInputLayout;
@@ -28,6 +30,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     private Button login,register;
     private TextView outputFromServer;
     private OkHttpClient client;
+    LoadingPage loadingPage;
     public static String store,username;
     public static final Integer ResultRemoved=2,threadSleep=3,threadCycle=3000;
     public static WebSocket ws;
@@ -48,6 +51,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
+
         usernameTil = findViewById(R.id.usernameInput);
         passwordTil = findViewById(R.id.passwordInput);
         login = findViewById(R.id.button_done_register);
@@ -55,14 +59,16 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
         outputFromServer = findViewById(R.id.TextViewFromServer);
 
 
+        loadingPage = new LoadingPage(LoginPage.this);
 
         client = new OkHttpClient();
-        Request request;
+        Request request = new Request.Builder().url("ws://qasx.duckdns.org:5001").build() ;
         if (testing)
             request = new Request.Builder().url("ws://echo.websocket.org").build();
-        else
-            request = new Request.Builder().url("ws://192.168.14.160:5001").build();
-            //request = new Request.Builder().url("ws://cthulhuserver.duckdns.org:5001").build();
+        else {
+            request = new Request.Builder().url("ws://qasx.duckdns.org:5001").build();
+        }
+        //request = new Request.Builder().url("ws://192.168.14.160:5001").build();
         EchoWebSocketListener listener = new EchoWebSocketListener();
         ws = client.newWebSocket(request, listener);
     }
@@ -86,7 +92,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                 getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE, WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE);
                 String jsonLoginStr;
                 if (LoginPage.testing)
-                    jsonLoginStr = "{messageType:loginResponse, loggedIn:true, username:" + username + ", password :" + password + "}";
+                    jsonLoginStr = "{messageType:loginResponse, loggedIn:true, username:" + username.toString() + ", password :" + password + "}";
                 else
                     jsonLoginStr = "{messageType:login ,username:" + username + ", password :" + password + "}";
 
@@ -95,14 +101,21 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                 if(echo)
                     ws.send(jsonLogin.toString());
                 else {
-                    Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
+                    String jsonLoginStr2;
+                    jsonLoginStr2 = "{messageType:itemsDataInitialiseResponse ,appliances: [], predicament:[], success:true }";
+                    JSONObject jsonLogin2 = new JSONObject(jsonLoginStr2);
+                    LoginPage.store=jsonLogin2.toString();
+
+                    Intent itemsAct = new Intent(LoginPage.this, Items.class);
                     startActivity(itemsAct);
+
                 }
 
                 //Toast.makeText(LoginPage.this,"username "+ username +" password" + password,Toast.LENGTH_SHORT).show();
             }
         }
         else if (view.getId()== register.getId()){
+
 
             Intent itemsAct = new Intent(LoginPage.this, RegisterScreen.class);
             startActivity(itemsAct);
@@ -151,13 +164,37 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
                     if(type.equals( "loginResponse"))
                     {
                         if (jsonObject.getString("loggedIn").equals("true")) {
+                            loadingPage.startLoadingDialog();
 
-                            Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
-                            startActivity(itemsAct);
+                            String jsonLoginStr;
+                            if (LoginPage.testing)
+                                jsonLoginStr = "{messageType:itemsDataInitialiseResponse ,appliances: [], predicament:[], success:true }";
+                            else
+                                jsonLoginStr = "{messageType:itemsDataInitialise ,username:" + LoginPage.username + "}";
+                            JSONObject jsonLogin = new JSONObject(jsonLoginStr);
+
+                            if(LoginPage.echo)
+                                LoginPage.ws.send(jsonLogin.toString());
+                            else
+                                LoginPage.store=jsonLogin.toString();
+
+
+                            //Intent itemsAct = new Intent(LoginPage.this, MainMenu.class);
+                           //startActivity(itemsAct);
                         }
                         else {
                             print(jsonObject.getString("errorDetails"));
                         }}
+                    else if(type.equals("itemsDataInitialiseResponse")){
+
+                        Intent itemsAct = new Intent(LoginPage.this, Items.class);
+                        loadingPage.dismissDialog();
+                        startActivity(itemsAct);
+
+                    }
+
+
+
 
             } catch (Exception e) {
                 e.printStackTrace();
