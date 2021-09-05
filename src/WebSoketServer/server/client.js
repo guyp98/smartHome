@@ -15,13 +15,13 @@ const ws = new WebSocket(serverAddress, {
 
 ws.on('open', function() {
     //ws.send("{\"messageType\":\"login\",\"username\":\"guy\",\"password\":\"porat\"}");
-   // ws.send("{\"messageType\":\"register\",\"username\":\"Dan\",\"password\":\"rotman\",\"type\":\"user\"}");
+    ws.send("{\"messageType\":\"register\",\"username\":\"Dan\",\"password\":\"rotman\",\"type\":\"user\"}");
        // ws.send("{\"messageType\":\"login\",\"username\":\"Dan\",\"password\":\"ddd\"}");
         ws.send("{\"messageType\":\"login\",\"username\":\"Dan\",\"password\":\"rotman\"}");
        /// ws.send("{\"messageType\":\"itemsDataInitialise\",\"username\":\"guy\"}");
        ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
-        ws.send("{\"messageType\":\"removeAppliance\",\"username\":\"1234\"}");
-      //  ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
+     //   ws.send("{\"messageType\":\"removeAppliance\",\"username\":\"1234\"}");
+   //     ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
    // ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
   //  ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
     //ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"1234\",\"msg\":\""+  "on"  +"\"}");

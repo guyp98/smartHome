@@ -7,7 +7,7 @@ var addToGroups=async(group)=>{
     try{
         const user =await prisma.groups.create({
             data: {
-            name: group
+            name: group,
             },
         })
     }
@@ -20,7 +20,7 @@ var deleteFromGroups=async(group)=>{
     try{
         const user =await prisma.groups.delete({
             where: {
-            name: group
+            name: group,
             },
         })
     }
@@ -131,9 +131,25 @@ var saveUserObj=async(userObj)=>{
     addToUserScenarios(userObj)
 }
 
-var editUserData= async(username,userData)=>{
-    await deleteUserData(username);
-    addUserData(username,userData);
+var editUserData= async(_username,userData)=>{
+    var allUserData=';';
+    userData.forEach((data)=>{
+        allUserData=allUserData+JSON.stringify(data)+";"
+    })
+    const upsertUser = await prisma.userData.upsert({
+        where: {
+            username: _username,
+        },
+        update: {
+            data:allUserData,
+        },
+        create: {
+            username: _username,
+            data:allUserData,
+        },
+      })
+    //await deleteUserData(_username);
+    //addUserData(_username,userData);
 }
 var editUserScenarios= async(userObj)=>{
     await deleteUserFromScenarios(userObj.username);
