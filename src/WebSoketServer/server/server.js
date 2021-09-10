@@ -112,7 +112,7 @@ function handleMsg(inputObj,user,userSocket,respond=true){
 
         case addAppliance:
             res=Users.addApplianceToUser(user.username,inputObj.details,inputObj.username);
-            respond&&userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res)&&result.isOk(Users.getPowerState(inputObj.username)),itemId:(res.msg)[0],state:Users.getPowerState(inputObj.username).msg,errorDetails:(res.msg)[1]});
+            respond&&userSocket.emit('send message to user',user.username,{messageType:"addApplianceResponse",added:result.isOk(res)&&result.isOk(Users.getPowerState(inputObj.username))/*need to delete from the database the userdata*/,itemId:(res.msg)[0],state:Users.getPowerState(inputObj.username).msg,errorDetails:(res.msg)[1]});
             break;
 
         case removeAppliance:

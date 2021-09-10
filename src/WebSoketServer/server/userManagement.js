@@ -2,6 +2,7 @@
 
 
 const { User,role,tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,all } = require("./commandAndRoles");
+const { loadGroups, loadUsers, loadUserData, loadScenario } = require("./loadData");
 const result = require("./result");
 const {saveUserObj, editUserData}= require("./SaveData");
 
@@ -189,11 +190,27 @@ const getPowerState=(username)=>{
     }
 }
 
+loadData=async()=>{
+    var users =await loadUsers();
+    await users.map(async(user)=>{
+        user.userData=await loadUserData(user.username)
+        if(user.role.type!="user"&&user.role.type!="admin"){
+            var scen =await loadScenario(user.username)
+            scen.map((scenPair)=>{
+                user.role.groups.set(scenPair.key,scenPair.val)
+            })
+        }
+        usersMap.set(user.username,user)
+        var x=1+1
+    });
+    
 
+}
+loadData();
 module.exports={isRole,getUserData,canAccess,
     parseUserAndPassword,addUser,authenticate,tryConnectUser,removeApplianceToUser,disconnect,
     isConnected,addApplianceToUser,editApplianceDetails,setPowerState,isFunExist,retrunAllAppliances, getPowerState
-    ,isUserExist,usersMap
+    ,isUserExist,loadData,usersMap
 };
 
 //addUser("guy","porat","user");

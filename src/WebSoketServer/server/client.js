@@ -20,8 +20,8 @@ ws.on('open', function() {
         ws.send("{\"messageType\":\"login\",\"username\":\"Dan\",\"password\":\"rotman\"}");
        /// ws.send("{\"messageType\":\"itemsDataInitialise\",\"username\":\"guy\"}");
        ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
-     //   ws.send("{\"messageType\":\"removeAppliance\",\"username\":\"1234\"}");
-   //     ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
+        ws.send("{\"messageType\":\"removeAppliance\",\"username\":\"1234\"}");
+        ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
    // ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
   //  ws.send("{\"messageType\":\"addAppliance\",\"details\":{\"area\":\"Guy\",\"desc\":\"Light\"},\"username\":\"1234\"}");
     //ws.send("{\"messageType\":\"userCommand\",\"sendTo\":\"1234\",\"msg\":\""+  "on"  +"\"}");
@@ -34,7 +34,7 @@ ws.on('open', function() {
     //setTimeout(()=>ws.send("{\"messageType\":\"flipTheSwitch\",\"sendToUsername\":\"1234\",\"msg\":"+  "true"  +"}"),2000);
     
 
-   // ws.send("{\"messageType\":\"group\",\"groupName\":\"new1\",\"names\":[{\"username\":\"1234\",\"onScenario\":{\"messageType\":\"getAllAppliances\"},\"offScenario\":{\"messageType\":\"getAllAppliances\"}}],\"action\":\"newGroup\"}");
+    ws.send("{\"messageType\":\"group\",\"groupName\":\"new1\",\"names\":[{\"username\":\"1234\",\"onScenario\":{\"messageType\":\"getAllAppliances\"},\"offScenario\":{\"messageType\":\"getAllAppliances\"}}],\"action\":\"newGroup\"}");
  //   ws.send("{\"messageType\":\"group\",\"groupName\":\"new1\",\"names\":[{\"username\":\"1234\",\"onScenario\":{\"messageType\":\"flipTheSwitch\",\"sendToUsername\":\"1234\",\"msg\":"+  "true"  +"},\"offScenario\":{\"messageType\":\"flipTheSwitch\",\"sendToUsername\":\"1234\",\"msg\":"+  "false"  +"}}],\"action\":\"EditGroup\"}");
   ///  ws.send("{\"messageType\":\"group\",\"groupName\":\"new1\",\"names\":[{\"username\":\"1234\",\"onScenario\":{\"messageType\":\"getAllAppliances\"},\"offScenario\":{\"messageType\":\"getAllAppliances\"}}],\"action\":\"groupScenarioOff\"}");
  //   ws.send("{\"messageType\":\"group\",\"groupName\":\"new1\",\"names\":[{\"username\":\"1234\",\"onScenario\":{\"messageType\":\"getAllAppliances\"},\"offScenario\":{\"messageType\":\"getAllAppliances\"}}],\"action\":\"groupScenarioOn\"}");

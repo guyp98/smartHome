@@ -57,6 +57,7 @@ var deletefromUser=async(_username)=>{
     }
 }
 
+/*
 var addToUserScenarios=async(userObj)=>{
     if(userObj.role.type!="user"&&userObj.role.type!="admin"){
         var groupsArray=Array.from(userObj.role.groups);
@@ -79,7 +80,7 @@ var addToUserScenarios=async(userObj)=>{
     }
     
 }
-
+*/
 var deleteUserFromScenarios=async(_username)=>{
     try{
         const user =await prisma.userScenarios.delete({
@@ -93,6 +94,7 @@ var deleteUserFromScenarios=async(_username)=>{
     }
 }
 
+/*
 var addUserData=async(_username,_data)=>{
     var allUserData=';';
     _data.forEach((data)=>{
@@ -110,7 +112,7 @@ var addUserData=async(_username,_data)=>{
         addMsgToPrint("databaseErorr  "+err);
     }
 }
-
+*/
 var deleteUserData=async(_username)=>{
     try{
         const user =await prisma.userData.delete({
@@ -126,9 +128,9 @@ var deleteUserData=async(_username)=>{
 
 
 var saveUserObj=async(userObj)=>{
-    addToUser(userObj.username,userObj.password,userObj.role.type);
-    addUserData(userObj.username,userObj.userData);
-    addToUserScenarios(userObj)
+    editToUser(userObj.username,userObj.password,userObj.role.type);
+    editUserData(userObj.username,userObj.userData);
+    editUserScenarios(userObj)
 }
 
 var editUserData= async(_username,userData)=>{
@@ -148,24 +150,61 @@ var editUserData= async(_username,userData)=>{
             data:allUserData,
         },
       })
-    //await deleteUserData(_username);
-    //addUserData(_username,userData);
 }
+
 var editUserScenarios= async(userObj)=>{
-    await deleteUserFromScenarios(userObj.username);
-    addToUserScenarios(userObj);
+    if(userObj.role.type!="user"&&userObj.role.type!="admin"){
+        var groupsArray=Array.from(userObj.role.groups);
+        var toSave=';';
+        groupsArray.forEach((entr)=>{
+            var str=entr[0].toString()+","+JSON.stringify(entr[1])+";";
+            toSave=toSave+str;
+        })
+        const upsertUser = await prisma.userScenarios.upsert({
+            where: {
+                username: userObj.username,
+            },
+            update: {
+                scenMap:toSave,
+            },
+            create: {
+                username:userObj.username,
+                scenMap:toSave,
+            },
+          })
+    }
+}
+
+var editToUser=async(_username,_password,_roleType)=>{
+    try{
+        const user =await prisma.users.upsert({
+            where: {
+                username: _username,
+            },
+            update: {
+                password: _password,
+                roleType:_roleType,
+            },
+            create: {
+            username: _username,
+            password: _password,
+            roleType:_roleType,
+            },
+        })
+    }
+    catch(err){
+        addMsgToPrint("databaseErorr  "+err);
+    }
 }
 
 
 
-
-
-
+/*
 userObj=new User("guy","porat","smartSwitch");
 userObj.role.groups.set("groupName",{onScenario:{g:"1"},scenarioOff:{g:"2"}})
 userObj.role.groups.set("groupName1",{onScenario:{g:"3"},scenarioOff:{g:"4"}})
 userObj.userData.push({username:"1234",detail:"(applianceName,applianceDescription)"});
 userObj.userData.push({username:"678",detail:"(applianceName,applianceDescription)"});
 //saveUserObj(userObj)
-
-module.exports={editUserScenarios,editUserData,addToGroups,deleteFromGroups,addToUser,deletefromUser,addToUserScenarios,deleteUserFromScenarios,saveUserObj};
+*/
+module.exports={editUserScenarios,editUserData,addToGroups,deleteFromGroups,addToUser,deletefromUser,deleteUserFromScenarios,saveUserObj};

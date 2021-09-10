@@ -1,8 +1,9 @@
 const { User,role,tryToConnect,echo, usersComunnication,register,giveUserData,addAppliance,removeAppliance,all } = require("./commandAndRoles");
 const result = require("./result");
-const { usersMap, isUserExist }=require('./userManagement');
+const { usersMap, isUserExist, loadData }=require('./userManagement');
 const { addMsgToPrint } = require('./serverLogs');
 const { addToGroups, deleteFromGroups, editUserScenarios }= require("./SaveData");
+const { loadGroups } = require("./loadData");
 
 var groupsNames=[];
 //const groupsMap=new Map(); //groupName => senerio  |||| scenerio=[{username:"____",onScenario:one off the commands in "commansAndRoles.js"},....] 
@@ -142,4 +143,10 @@ const isGroupExist=(groupName)=>{
     }
     return false;
 }
+var loadScenData=async()=>{
+    groupsNames=await loadGroups()
+
+}
+loadScenData();
+
 module.exports={actionSwitch};
