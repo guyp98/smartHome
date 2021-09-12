@@ -44,7 +44,7 @@ const tryConnectUser=(userName,password)=>{
     var auth=authenticate(userName,password);
     if(result.isOk(auth)){
         var isconn=isConnected(userName);
-        if( !result.isOk(isconn)){
+        if( !isconn){
             userObj=usersMap.get(userName);
             if(userObj==undefined){return result.makeFailure("user not exist")}
             userObj.Connected=true;

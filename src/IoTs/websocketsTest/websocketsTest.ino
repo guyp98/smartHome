@@ -1,9 +1,9 @@
 #include <ArduinoWebsockets.h>
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
-int gpio=LED_BUILTIN;
-const char* ssid = "BEZEQINT-A09A-2.4G"; //Enter SSID
-const char* password = "SSgdaA0584442626"; //Enter Password
+int gpio=0;//LED_BUILTIN;
+const char* ssid = "DESKTOP-CLA282V 0265";//"BEZEQINT-A09A-2.4G"; //Enter SSID
+const char* password = "P$6671o2";//"SSgdaA0584442626"; //Enter Password
 const char* websockets_server = "ws://192.168.14.160:5001"; //server adress and port
 //const char* websockets_server ="ws://cthulhuserver.duckdns.org:5001";
 //const char* password ="guy123123";
@@ -54,6 +54,7 @@ void onEventsCallback(WebsocketsEvent event, String data) {
 void setup() {
     Serial.begin(115200);
     pinMode(gpio, OUTPUT);
+    pinMode(LED_BUILTIN, OUTPUT);
     WiFi.begin(ssid, password);
     while(WiFi.status() != WL_CONNECTED){
         Serial.print(".");
@@ -68,6 +69,7 @@ void setup() {
     client.send(loginToServer(Username,Password));
     client.poll();
     digitalWrite(gpio, LOW);
+    digitalWrite(LED_BUILTIN, LOW);
     client.send(statusToServer("on"));
 }
 
@@ -120,8 +122,8 @@ String inputCommand(String json){
     Serial.print(command+"\n");
     Serial.print(temp+"\n");
     lastSender=temp;
-    if(command=="on"){Serial.print("flip switch on");digitalWrite(gpio, LOW);}
-    else if(command=="off"){Serial.print("flip switch off");digitalWrite(gpio, HIGH);}
+    if(command=="on"){Serial.print("flip switch on");digitalWrite(gpio, LOW);digitalWrite(LED_BUILTIN, LOW);}
+    else if(command=="off"){Serial.print("flip switch off");digitalWrite(gpio, HIGH);digitalWrite(LED_BUILTIN, HIGH);}
     if(command!=""){
       client.send(statusToServer(command));
       return "fail";
