@@ -35,7 +35,7 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
     public static String store,username;
     public static final Integer ResultRemoved=2,threadSleep=3,threadCycle=3000;
     public static WebSocket ws;
-    public static boolean testing=false,echo=true;
+    public static boolean testing=true,echo=false;
 
 
 
@@ -48,8 +48,10 @@ public class LoginPage extends AppCompatActivity implements WebSocketRecieve {
         });
     }
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_page);
 

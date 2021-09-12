@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -43,7 +44,7 @@ public class ComboEdit extends AppCompatActivity {
 
         save = findViewById(R.id.button_save2);
         delete = findViewById(R.id.button_delete_combo);
-        groupNameTil = findViewById(R.id.textInputComboNameEdit);
+         groupNameTil = findViewById(R.id.textInputComboNameEdit);
         applianceListview = findViewById(R.id.listview_combo_edit);
 
         isChecked =new ArrayList<>();
@@ -55,6 +56,7 @@ public class ComboEdit extends AppCompatActivity {
 
         Intent intent = getIntent();
         name = intent.getStringExtra("area");
+
 
 
 
