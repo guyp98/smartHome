@@ -45,27 +45,37 @@ public class RegisterScreen extends AppCompatActivity {
             String passwordString = password.getEditText().getText().toString();
             String passwordString2 = password2.getEditText().getText().toString();
             if (passwordString.equals(passwordString2)) {
-                String jsonLoginStr;
-                if (LoginPage.testing)
-                    jsonLoginStr = "{messageType:registerResponse, registered:true, username:" + usernameString + ", password :" + passwordString + "}";
-                else
-                    jsonLoginStr = "{messageType:register, username:" + usernameString + ", password :" + passwordString + ",type: user }";
-
-                JSONObject jsonLogin = new JSONObject(jsonLoginStr);
-                LoginPage.store = "";
-                if(LoginPage.echo)
-                    LoginPage.ws.send(jsonLogin.toString());
-                else
-                    LoginPage.store=jsonLogin.toString();
-
-                //to do find better idea
+                Boolean letter=false,digit= false;
+                for (int i = 0; i < passwordString.length() ; i++) {
+                    if(Character.isLetter(passwordString.charAt(i)))
+                        letter=true;
+                    if(Character.isDigit(passwordString.charAt(i)))
+                        digit=true;
+                }
+                if(letter & digit) {
 
 
-                checkIfResponse = new Runnable() {
-                    @Override
-                    public void run() {
+                    String jsonLoginStr;
+                    if (LoginPage.testing)
+                        jsonLoginStr = "{messageType:registerResponse, registered:true, username:" + usernameString + ", password :" + passwordString + "}";
+                    else
+                        jsonLoginStr = "{messageType:register, username:" + usernameString + ", password :" + passwordString + ",type: user }";
+
+                    JSONObject jsonLogin = new JSONObject(jsonLoginStr);
+                    LoginPage.store = "";
+                    if (LoginPage.echo)
+                        LoginPage.ws.send(jsonLogin.toString());
+                    else
+                        LoginPage.store = jsonLogin.toString();
+
+                    //to do find better idea
+
+
+                    checkIfResponse = new Runnable() {
+                        @Override
+                        public void run() {
                             Log.d("checkIfResponseThread", "my id is " + Thread.currentThread().getName());
-                        started=false;
+                            started = false;
                             for (int i = 0; i < LoginPage.threadCycle & !started; i++) {
                                 try {
                                     Thread.sleep(LoginPage.threadSleep);
@@ -80,9 +90,14 @@ public class RegisterScreen extends AppCompatActivity {
                             //if (!started)
                             //  errorLoading.setText("Could not load, please check internet connection");
                         }
-                };
-                Thread itemsActThread = new Thread(checkIfResponse);
-                itemsActThread.start();
+                    };
+                    Thread itemsActThread = new Thread(checkIfResponse);
+                    itemsActThread.start();
+                }
+                else{
+                    errorPassword.setText("password must contain a letter and digit");
+
+                }
             } else {
 
                 errorPassword.setText("passwords do not match");
