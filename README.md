@@ -36,15 +36,14 @@ Our end result
 Circuit schematics- https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitchCircuit.png
 
 ### Router
-In this project, the app communicates with the server on the same network as well as remotely. To achieve this remote communication we configured the router to port forward the server port. 
-This will work well except for routers with dynamic IP since the IP changes regularly. We, therefore, used DDNS (duckDNS) - the server sends its IP to the DDNS. The DDNS updates the router IP regularly and the app connects to the appropriate domain in the DDNS. 
+In this project, the app communicates with the server on the same network as well as remotely. To achieve this remote communication we configured the router to port forward the server port. This will work well except for routers with dynamic IP since the IP changes regularly. We, therefore, used DDNS (duckDNS) - the server sends its IP to the DDNS. The DDNS updates the router IP regularly and the app connects to the appropriate domain in the DDNS. 
 
 
 
 
 
 
-To use the app outside the home network you need to portforword the server port and use DDNS if you dont have a static ip 
+
 
 
 
