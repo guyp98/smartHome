@@ -15,7 +15,7 @@ https://user-images.githubusercontent.com/63144072/134307949-1ada24e5-78f1-4906-
 
 
 ## Flow Chart success scenario
-
+![image](https://github.com/guyp98/smartHome/blob/main/readingMaterial/flow_chart.png)
 
 
 ## The breakdown of each component
