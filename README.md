@@ -1,6 +1,6 @@
-# smart home
+# Smart Home
 
-this project includs code for android app, home server and smart Switch.
+This project is a full package to implement a smart home. Starting from the android app all the way to a physical smart switch. This includes code for an android app, a home server and smart Switch. We also included the schematics for the smart switch.
 
 ## how all come together
 ![image](https://user-images.githubusercontent.com/63144072/134199323-d933e467-3390-48bd-a524-684467573887.png)
