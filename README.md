@@ -31,7 +31,9 @@ In its essence, the smart switch is a relay controlled by a microcontroller.
 We chose the ESP because of its native integration with the Arduino ide, low price and its wifi capabilities. 
 
 Our end result
-![image]()
+
+![image](https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitch1.jpg)
+![image](https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitch2.jpg)
 
 Circuit schematics- https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitchCircuit.png
 
