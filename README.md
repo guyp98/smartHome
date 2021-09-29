@@ -26,8 +26,18 @@ https://user-images.githubusercontent.com/63144072/134307949-1ada24e5-78f1-4906-
 ### Server
 
 ### Smart Switch
+In its essence, the smart switch is a relay controlled by a microcontroller.                                                                                           
+-The microcontroller - We used an ESP8266  chip in the ESP-01s module.
+We chose the ESP because of its native integration with the Arduino ide, low price and its wifi capabilities. 
+
+Our end result
+![image]()
+
+Circuit schematics- https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitchCircuit.png
+
 
 ### Router
+
 
 
 
