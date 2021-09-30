@@ -21,18 +21,17 @@ https://user-images.githubusercontent.com/63144072/134307949-1ada24e5-78f1-4906-
 ## The breakdown of each component
 
 ### Android app
- The application is written in Android studio and is direct for android users. It is written in Java and contains 10 different Activities. The cummunication with the server is done with websockets, that send pre-defined json objects.
+ The application is written in Android studio and is targeted for android users. It is written in Java and contains 10 different Activities. The communication with the server is done through websockets that send predefined json objects.
 
 #### Features:
 
-Each of the features written changes in the app and notifies/get approval from the server.
 - Login and Registration windows.
 - Option to add new Items, the system automatically reviews appliances that are connected to the server but not to the specific account and displays them. 
-- Ability to change name, and items description and area
+- Ability to change name and items description and area.
 - Ability to delete an item.
 
-Combos - We wanted to do something new and we thought of combos, the ability to activate many different appliances with one click. For example while watching TV you enjoy turning off all the light in the living room and turning on the kitchen light. This is possible by creating a combo.
-- Create a combo and define which appliance are a part of it and what the appliances will do when the combo is activated. This was especially difficult because there is a lot of information to display and to input. Keeping it all in one page and organized and readable was tough.
+Combos - We wanted to do something new and we thought of combos, the ability to activate multiple appliances with one click. For example while watching TV you enjoy turning off all the light in the living room and turning on the kitchen light. This is possible by creating a combo.
+- Create a combo and define which appliance are a part of it and what the appliances will do when the combo is activated. This was very intricate because there is a lot of information to display and to input therefor keeping it all in one page and organized and readable was challenging.
 - Each Item can be a part of as many combos as you’d like, and each combo can have between 1 - n items (n being the amount of appliances). 
 - Combos can be edited to change an appliance activity or to change which appliances are part of the combo.
 
