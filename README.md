@@ -21,9 +21,7 @@ https://user-images.githubusercontent.com/63144072/134307949-1ada24e5-78f1-4906-
 ## The breakdown of each component
 
 ### Android app
- The application is written in Android studio and is direct for android users. It is written in Java and contains 10 different Activities.
-
-The application uses a web socket that is created when the user enters the application. The user logs in and the web socket sends the data to the server and waits for a reply. 
+ The application is written in Android studio and is direct for android users. It is written in Java and contains 10 different Activities. The cummunication with the server is done with websockets, that send pre-defined json objects.
 
 #### Features:
 
@@ -33,22 +31,11 @@ Each of the features written changes in the app and notifies/get approval from t
 - Ability to change name, and items description and area
 - Ability to delete an item.
 
-``` make more prevelent? ```
-
 Combos - We wanted to do something new and we thought of combos, the ability to activate many different appliances with one click. For example while watching TV you enjoy turning off all the light in the living room and turning on the kitchen light. This is possible by creating a combo.
 - Create a combo and define which appliance are a part of it and what the appliances will do when the combo is activated. This was especially difficult because there is a lot of information to display and to input. Keeping it all in one page and organized and readable was tough.
 - Each Item can be a part of as many combos as you’d like, and each combo can have between 1 - n items (n being the amount of appliances). 
 - Combos can be edited to change an appliance activity or to change which appliances are part of the combo.
 
-#### Technical details:
-
-- The communication is done with Json objects with a pre defined structure.
-
-- Activities that need to load data wait for the reply form the server, where as activities that should be immediate (turning on/off a light switch) act immediately and if there is an issue notify when the response from the server returns.  loading data the 
-
-- In the items page each we have a list view with a custom array adapter which displays the photo of the product, a description, area and the switch to turn on and off. If clicked on the item (onClickListener) it will open the ItemInfo page which displays more info about the appliance. A major problem was how to have two onClickListener objects, one for the whole product to transition into the itemInfo page and the other to turn on the appliance. This was solved by writing in the XML file of the listview (for a single item) “android:descendantFocusability="blocksDescendants”. Which makes both the appliance clickable and the switch. This was also used in the comboPage.
-
-- To make the code more efficient I used a holder for the array adapters. This holder held all the object (switches, images, textviews…) and would make runtime quicker by not having to use “findViewById”. 
 
 ### Server
 
