@@ -37,6 +37,8 @@ Combos - We wanted to do something new and we thought of combos, the ability to 
 
 
 ### Server
+The server's role is to control all the smart appliances in the house and save all data concerning them, this data can be shared with the user via the app.                          
+The server is a WebSockets server written in node.js .we chose node.js thanks for its support asynchronous execution, so the server is robust and has very low latency. The server has no GUI for users. It's only meant to work with the designated app. For simplicity, the app and the server communicate via strings of JSON files. 
 
 ### Smart Switch
 In its essence, the smart switch is a relay controlled by a microcontroller.                                                                                           
