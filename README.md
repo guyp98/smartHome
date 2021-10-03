@@ -55,7 +55,7 @@ Circuit schematics- https://github.com/guyp98/smartHome/blob/main/readingMateria
 ### Router
 In this project, the app communicates with the server remotely and on the same network.
 To achieve the remote communication:
-- port-forword the server port
+- We port-forword the servers port.
 - We used a DDNS (duckDNS) which the server updates every 5 minutes with its current IP. Then the DDNS routs the server domain to the new IP.
 So the android app has one static domain that it can connect to from any network in the world.
 
