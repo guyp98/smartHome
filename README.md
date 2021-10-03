@@ -53,12 +53,13 @@ Our end result
 Circuit schematics- https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitchCircuit.png
 
 ### Router
-In this project, the app communicates with the server remotlely and on the same network.
-To achieve the remote communication we did the following:
-We used a DDNS (duckDNS):
-the server updates the DDNS every 5 minutes what with its current IP. Then the DDNS 
+In this project, the app communicates with the server remotely and on the same network.
+To achieve the remote communication:
+- port-forword the server port
+- We used a DDNS (duckDNS) which the server updates every 5 minutes with its current IP. Then the DDNS routs the server domain to the new IP.
+So the android app has one static domain that it can connect to from any network in the world.
 
-This will work well except for routers with dynamic IP since the IP changes regularly. We, therefore, used DDNS (duckDNS) - The DDNS updates the router IP regularly and the app connects to the appropriate domain in the DDNS. 
+
 
 
 
