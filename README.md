@@ -21,30 +21,29 @@ https://user-images.githubusercontent.com/63144072/134307949-1ada24e5-78f1-4906-
 ## The breakdown of each component
 
 ### Android app
- The application is written in Android studio and is targeted for android users. It is written in Java and contains 10 different Activities. The communication with the server is done through websockets that send predefined json objects.
+ The application is written in Android Studio and is targeted for android users. It is written in Java and contains 10 different Activities. The communication with the server is done through websockets that send string of predefined JSON objects.
 
 #### Features:
 
 - Login and Registration windows.
 - Option to add new Items, the system automatically reviews appliances that are connected to the server but not to the specific account and displays them. 
-- Ability to change name and items description and area.
+- Ability to change an items name, description and area.
 - Ability to delete an item.
 
-Combos - We wanted to do something new and we thought of combos, the ability to activate multiple appliances with one click. For example while watching TV you enjoy turning off all the light in the living room and turning on the kitchen light. This is possible by creating a combo.
-- Create a combo and define which appliance are a part of it and what the appliances will do when the combo is activated. This was very intricate because there is a lot of information to display and to input therefor keeping it all in one page and organized and readable was challenging.
+Combos - We wanted to do something new and we thought of combos, the ability to activate multiple appliances with one click. For example while watching TV you would like to turn off all the lights in the living room and turn on the kitchen light in one click. This is possible by creating a combo.
+- Create a combo and define which appliances are a part of it and what the appliances will do when the combo is activated. This was very intricate because there is a lot of information to display and for the user to input. Therefor keeping it all in one page, organized and readable was challenging.
 - Each Item can be a part of as many combos as you’d like, and each combo can have between 1 - n items (n being the amount of appliances). 
-- Combos can be edited to change an appliance activity or to change which appliances are part of the combo.
+- Combos can be edited to change an appliance activity or to change which appliances are a part of the combo.
 
 
 ### Server
-The server's role is to control all the smart appliances in the house and save all data concerning them, this data can be shared with the user via the app.                          
-The server is a WebSockets server written in node.js .we chose node.js thanks for its support asynchronous execution, so the server is robust and has very low latency. The server has no GUI for users. It's only meant to work with the designated app. For simplicity, the app and the server communicate via strings of JSON files. 
+The server's role is to control all the smart appliances in the house and to save all of their data, such as the appliances name, area, state... The user can access this data through the app.                          
+The server is a WebSockets server written in Node.js. We chose Node.js because of its support of asynchronous execution, which we use frequently. This makes the server very robust and with extremely low latency. The server has no GUI for the users, and it's only meant to work with the designated android app. The app and the server communicate via strings of JSON objects. 
 
 ### Smart Switch
-In its essence, the smart switch is a relay controlled by a microcontroller.                                                                                           
-- The microcontroller - We used an ESP8266  chip in the ESP-01s module.
-We chose the ESP because of its native integration with the Arduino ide, low price and its wifi capabilities. 
--  the switch only saves its own id. All the rest is saved by the server. The switch acts as "slave" to the server (gets commands and return responses) 
+The main component of the Smart Switch is a relay that is controlled by a microcontroller.                                                                                          
+- The microcontroller - We used an ESP8266 chip, with the ESP-01s module. We chose the ESP because of its native integration with wi-fi and the Arduino ide, also it has a low price. 
+-  The switch only saves its own unique id. The rest of the switch's information is saved by the server. The switch acts as "slave" to the server - gets commands and return responses.
 
 Our end result
 
@@ -54,7 +53,12 @@ Our end result
 Circuit schematics- https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitchCircuit.png
 
 ### Router
-In this project, the app communicates with the server on the same network as well as remotely. To achieve this remote communication we configured the router to port forward the server port. This will work well except for routers with dynamic IP since the IP changes regularly. We, therefore, used DDNS (duckDNS) - the server sends its IP to the DDNS. The DDNS updates the router IP regularly and the app connects to the appropriate domain in the DDNS. 
+In this project, the app communicates with the server remotlely and on the same network.
+To achieve the remote communication we did the following:
+We used a DDNS (duckDNS):
+the server updates the DDNS every 5 minutes what with its current IP. Then the DDNS 
+
+This will work well except for routers with dynamic IP since the IP changes regularly. We, therefore, used DDNS (duckDNS) - The DDNS updates the router IP regularly and the app connects to the appropriate domain in the DDNS. 
 
 
 
