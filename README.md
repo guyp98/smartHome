@@ -44,6 +44,7 @@ The server is a WebSockets server written in Node.js. We chose Node.js because o
 The main component of the Smart Switch is a relay that is controlled by a microcontroller.                                                                                          
 - The microcontroller - We used an ESP8266 chip, with the ESP-01s module. We chose the ESP because of its native integration with wi-fi and the Arduino ide, also it has a low price. 
 -  The switch only saves its own unique id. The rest of the switch's information is saved by the server. The switch acts as "slave" to the server - gets commands and return responses.
+- The powe supply- The smart switch operate with 5v but can operat with 220v do to its small Switched-mode power supply 
 
 Our end result
 
