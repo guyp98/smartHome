@@ -46,7 +46,8 @@ The main component of the Smart Switch is a relay that is controlled by a microc
 -  The switch only saves its own unique id. The rest of the switch's information is saved by the server. The switch acts as "slave" to the server - gets commands and return responses.
 - Power Supply - The smart switch operates with 5v, but can operate with 220v do to its switched-mode power supply.
 
-Our end result
+
+### Our end result
 
 ![image](https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitch1.jpg)
 ![image](https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitch2.jpg)
