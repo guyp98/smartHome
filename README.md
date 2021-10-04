@@ -38,7 +38,7 @@ Combos - We wanted to do something new and we thought of combos, the ability to 
 
 ### Server
 The server's role is to control all the smart appliances in the house and to save all of their data, such as the appliances name, area, state... The user can access this data through the app.                          
-The server is a WebSockets server written in Node.js. We chose Node.js because of its support of asynchronous execution, which we use frequently. This makes the server very robust and with extremely low latency. The server has no GUI for the users, and it's only meant to work with the designated android app. The app and the server communicate via strings of JSON objects. 
+The server is a WebSockets server written in Node.js. We chose Node.js because of its support of asynchronous execution, which we use frequently. This makes the server very robust and with extremely low latency. The server has no GUI for the users, and is only meant to work with the designated android app. The app and the server communicate via strings of JSON objects. 
 
 ### Smart Switch
 The main component of the Smart Switch is a relay that is controlled by a microcontroller.                                                                                          
@@ -53,11 +53,12 @@ Our end result
 Circuit schematics- https://github.com/guyp98/smartHome/blob/main/readingMaterial/IOT/smartSwitchCircuit.png
 
 ### Router
-In this project, the app communicates with the server remotely and on the same network.
-To achieve the remote communication:
-- We port-forword the servers port.
-- We used a DDNS (duckDNS) which the server updates every 5 minutes with its current IP. Then the DDNS routs the server domain to the new IP.
-So the android app has one static domain that it can connect to from any network in the world.
+In this project, the app communicates with the server remotely as well as on the same network.
+To achieve this remote communication:
+- We port-forwarded the servers port.
+- We used a DDNS (duckDNS) which the server updates every 5 minutes with its current IP.
+- Then the DDNS routs the servers domain to the new IP.
+- Therefor the android app has one static domain that it can connect to from any network in the world.
 
 
 
