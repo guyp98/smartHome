@@ -2,12 +2,10 @@
 #include <ESP8266WiFi.h>
 #include <ArduinoJson.h>
 int gpio=0;//LED_BUILTIN;
-const char* ssid = "DESKTOP-CLA282V 0265";//"BEZEQINT-A09A-2.4G"; //Enter SSID
-const char* password = "P$6671o2";//"SSgdaA0584442626"; //Enter Password
-const char* websockets_server = "ws://192.168.14.160:5001"; //server adress and port
-//const char* websockets_server ="ws://cthulhuserver.duckdns.org:5001";
-//const char* password ="guy123123";
-//const char* ssid ="ONEPLUS8t-guy";
+const char* ssid =  //Enter SSID
+const char* password =  //Enter Password
+const char* websockets_server =  //server adress and port
+
 
 const char* Username="1234";
 const char* Password="1234";
