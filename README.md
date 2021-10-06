@@ -9,7 +9,9 @@ This project is a full package to implement a smart home. Starting from the andr
 The android app comunicate with the server and the server with the smart switch.
 As seen in the picture every home has one server that control the switches in the house.
 
-https://github.com/guyp98/smartHome/blob/main/readingMaterial/demonstration.mp4
+
+https://user-images.githubusercontent.com/63144072/136206212-27a856f1-4c76-40e0-aa65-0c57a1a08b7d.mp4
+
 
 
 ## Flow Chart success scenario
